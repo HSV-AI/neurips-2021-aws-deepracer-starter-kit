@@ -1,0 +1,8 @@
+{
+  "challenge_id": "evaluations-api-deepracer",
+  "grader_id": "evaluations-api-deepracer",
+  "authors": ["aicrowd-bot"],
+  "tags": "change-me",
+  "description": "Random agent for AWS Deep Racer",
+}
+
