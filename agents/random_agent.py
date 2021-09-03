@@ -1,5 +1,5 @@
 import numpy as np
-from deepracer_base_agent import DeepracerAgent
+from agents.deepracer_base_agent import DeepracerAgent
 
 class RandomDeepracerAgent(DeepracerAgent):
     def __init__(self):
