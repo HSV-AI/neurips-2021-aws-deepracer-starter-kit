@@ -1,4 +1,4 @@
 from agents.random_agent import RandomDeepracerAgent
 
-class LocalEvaluationConfig:
+class SubmissionConfig:
     submission_agent = RandomDeepracerAgent
