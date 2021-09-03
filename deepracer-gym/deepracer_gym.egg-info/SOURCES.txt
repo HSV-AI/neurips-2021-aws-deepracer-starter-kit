@@ -1,7 +1,0 @@
-README.md
-setup.py
-deepracer_gym.egg-info/PKG-INFO
-deepracer_gym.egg-info/SOURCES.txt
-deepracer_gym.egg-info/dependency_links.txt
-deepracer_gym.egg-info/requires.txt
-deepracer_gym.egg-info/top_level.txt
