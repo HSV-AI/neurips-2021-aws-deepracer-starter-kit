@@ -1,7 +1,6 @@
 {
   "challenge_id": "neurips-2021-aws-deepracer-ai-driving-olympics-challenge",
   "authors": ["aicrowd-bot"],
-  "tags": "change-me",
   "description": "Random agent for AWS Deep Racer"
 }
 
