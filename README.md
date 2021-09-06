@@ -42,9 +42,9 @@ Your goal is to train a model that can complete a lap as fast as possible withou
 
 In this challenge, you will train your models locally and then upload them to AIcrowd (via git) to be evaluated.
 
-<!-- **The following is a high level description of how this process works.** -->
+**The following is a high level description of how this process works.**
 
-<!-- <div class="tenor-gif-embed" data-postid="22946542" data-share-method="host" data-width="100%" data-aspect-ratio="5.03030303030303"><a href="https://tenor.com/view/gif-22946542">GIF</a> </div><script type="text/javascript" async src="https://tenor.com/embed.js"></script> -->
+![Submission Flow](https://gitlab.aicrowd.com/deepracer/neurips-2021-aws-deepracer-starter-kit/-/raw/master/docs/submission_flow.gif)
 
 1. **Sign up** to join the competition [on the AIcrowd website](https://www.aicrowd.com/challenges/neurips-2021-aws-deepracer-ai-driving-olympics-challenge).
 2. **Clone** this repo and start developing your solution.
