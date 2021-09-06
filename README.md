@@ -21,9 +21,9 @@ This repository contains:
 
 - [📚 Competition procedure](#-competition-procedure)
 - [💪 Getting started](#-getting-started)
+- [🏎 Deepracer Gym Environment](#-deepracer-gym-environment)
 - [🛠 Preparing your submission](#-preparing-your-submission)
   * [Write your agents](#write-your-agents)
-  * [Evaluate your agents locally](#evaluate-your-agents-locally)
 - [📨 Submission](#-submission)
   * [Repository Structure](#repository-structure)
   * [Runtime configuration](#runtime-configuration)
