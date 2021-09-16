@@ -180,6 +180,7 @@ If you want to submit without the helper script, please refer [`SUBMISSION.md`](
 - 🎮 Deepracer resources
     * [Deepracer documentation](https://docs.aws.amazon.com/deepracer/latest/developerguide/what-is-deepracer.html)
     * [Deepracer homepage](https://aws.amazon.com/deepracer/)
+    * [ICRA Paper](https://ieeexplore.ieee.org/document/9197465)
     
 
 # ✨ Contributors
