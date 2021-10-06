@@ -4,14 +4,13 @@ import msgpack
 import msgpack_numpy as m
 m.patch()
 
-
 class DeepracerZMQClient:
     def __init__(self, host="127.0.0.1", port=8888):
         self.host = host
         self.port = port
         self.socket = zmq.Context().socket(zmq.REQ)
-        self.socket.set(zmq.SNDTIMEO, 20000)
-        self.socket.set(zmq.RCVTIMEO, 20000)
+        self.socket.set(zmq.SNDTIMEO, 60000)
+        self.socket.set(zmq.RCVTIMEO, 60000)
         self.socket.connect(f"tcp://{self.host}:{self.port}")
     
     def set_agent_ready(self):

@@ -1,0 +1,132 @@
+2021-09-29
+Look at the OpenAI gym stuff for Atari and look at their wrappers
+
+Need to get the codebase into github or something like that
+
+Need to find a way to do collaborative editing
+
+Need to set up a hsv-ai discord server
+
+Need to find a way to visualize what this racer is doing
+
+For the container doing the training:
+/opt/m1/code/
+
+test_reward_function.py
+def reward_function(params):
+
+    distance_from_center = params['distance_from_center']
+    track_width = params['track_width']
+
+    marker_1 = 0.1 * track_width
+    marker_2 = 0.25 * track_width
+    marker_3 = 0.5 * track_width
+
+    reward = 1e-3
+    if distance_from_center <= marker_1:
+        reward = 1
+    elif distance_from_center <= marker_2:
+        reward = 0.5
+    elif distance_from_center <= marker_3:
+        reward = 0.1
+    else:
+        reward = 1e-3  # likely crashed/ close to off track
+
+    return float(reward)
+
+
+test_model_metadata.json
+{
+    "action_space": [
+        {
+            "steering_angle": -30,
+            "speed": 0.6
+        },
+        {
+            "steering_angle": -15,
+            "speed": 0.6
+        },
+        {
+            "steering_angle": 0,
+            "speed": 0.6
+        },
+        {
+            "steering_angle": 15,
+            "speed": 0.6
+        },
+        {
+            "steering_angle": 30,
+            "speed": 0.6
+        }
+    ],
+    "sensor": ["STEREO_CAMERAS"],
+    "neural_network": "DEEP_CONVOLUTIONAL_NETWORK_SHALLOW",
+    "version": "4"
+}
+
+training_params.yaml
+WORLD_NAME:                           "reInvent2019_track"
+SAGEMAKER_SHARED_S3_BUCKET:           "aws-deepracer-bba2e912-6ef0-4c3c-a072-ce17e254bcf2"
+SAGEMAKER_SHARED_S3_PREFIX:           "sagemaker-rlexp-deepracer-prefix"
+TRAINING_JOB_ARN:                     ""
+METRICS_S3_BUCKET:                    "aws-deepracer-bba2e912-6ef0-4c3c-a072-ce17e254bcf2"
+METRICS_S3_OBJECT_KEY:                "sagemaker-rlexp-deepracer-prefix/training_metrics.json"
+SIMTRACE_S3_BUCKET:                   "aws-deepracer-bba2e912-6ef0-4c3c-a072-ce17e254bcf2"
+SIMTRACE_S3_PREFIX:                   "sagemaker-rlexp-deepracer-prefix/iteration-data/training"
+MP4_S3_BUCKET:                        "aws-deepracer-bba2e912-6ef0-4c3c-a072-ce17e254bcf2"
+MP4_S3_OBJECT_PREFIX:                 "sagemaker-rlexp-deepracer-prefix/iteration-data/training"
+AWS_REGION:                           "us-east-1"
+TARGET_REWARD_SCORE:                  "None"
+NUMBER_OF_EPISODES:                   "0"
+JOB_TYPE:                             "TRAINING"
+CHANGE_START_POSITION:                "true"
+ALTERNATE_DRIVING_DIRECTION:          "false"
+KINESIS_VIDEO_STREAM_NAME:            "dr-rlexp-deepracer-prefix"
+REWARD_FILE_S3_KEY:                   "sagemaker-rlexp-deepracer-prefix/customer_reward_function.py"
+MODEL_METADATA_FILE_S3_KEY:           "sagemaker-rlexp-deepracer-prefix/model/model_metadata.json"
+NUMBER_OF_OBSTACLES:                  "0"
+IS_OBSTACLE_BOT_CAR:                  "false"
+RANDOMIZE_OBSTACLE_LOCATIONS:         "false"
+IS_LANE_CHANGE:                       "false"
+LOWER_LANE_CHANGE_TIME:               "3.0"
+UPPER_LANE_CHANGE_TIME:               "5.0"
+LANE_CHANGE_DISTANCE:                 "1.0"
+NUMBER_OF_BOT_CARS:                   "0"
+MIN_DISTANCE_BETWEEN_BOT_CARS:        "2.0"
+RANDOMIZE_BOT_CAR_LOCATIONS:          "true"
+BOT_CAR_SPEED:                        "0.2"
+CAR_COLOR:                            "Blue"
+NUMBER_OF_RESETS:                     "0"
+RACE_TYPE:                            "HEAD_TO_BOT"
+ENABLE_DOMAIN_RANDOMIZATION:          "false"
+DISPLAY_NAME:                         "LongLongRacerNameBlaBlaBla"
+REVERSE_DIR:                          "false"
+BODY_SHELL_TYPE:                      "deepracer"
+NUM_WORKERS:                          "1"
+
+Available Worlds
+AWS_track.world                   Spain_track_f1.world
+Albert.world                      Straight_track.world
+AmericasGeneratedInclStart.world  Tokyo_Racing_track.world
+Aragon.world                      Tokyo_Training_track.world
+Austin.world                      Vegas_track.world
+Belille.world                     Virtual_Competition_1.world
+Bowtie_track.world                Virtual_May19_Comp_track.world
+Canada_Race.world                 Virtual_May19_Train_track.world
+Canada_Training.world             hamption_open.world
+ChinaAlt_track.world              hamption_pro.world
+China_track.world                 jyllandsringen_open.world
+FS_June2020.world                 jyllandsringen_pro.world
+July_2020.world                   penbay_open.world
+LGSWide.world                     penbay_pro.world
+MexicoAlt_track.world             reInvent2019_track.world
+Mexico_track.world                reInvent2019_wide.world
+Monaco.world                      reInvent2019_wide_mirrored.world
+Monaco_building.world             reinvent_base.world
+New_YorkAlt_Track.world           reinvent_base_jeremiah.world
+New_York_Track.world              reinvent_carpet.world
+Oval_track.world                  reinvent_concrete.world
+Singapore.world                   reinvent_wood.world
+Singapore_building.world          thunder_hill_open.world
+Singapore_f1.world                thunder_hill_pro.world
+Spain_track.world
