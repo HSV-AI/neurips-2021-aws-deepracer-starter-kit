@@ -1,20 +1,23 @@
 import zmq
+import time
 import msgpack
 
 import msgpack_numpy as m
 m.patch()
+
 
 class DeepracerZMQClient:
     def __init__(self, host="127.0.0.1", port=8888):
         self.host = host
         self.port = port
         self.socket = zmq.Context().socket(zmq.REQ)
-        self.socket.set(zmq.SNDTIMEO, 60000)
-        self.socket.set(zmq.RCVTIMEO, 60000)
+        # Large timout for first connection
+        self.socket.set(zmq.SNDTIMEO, 600000)  # 10m
+        self.socket.set(zmq.RCVTIMEO, 600000)
         self.socket.connect(f"tcp://{self.host}:{self.port}")
     
     def set_agent_ready(self):
-        packed_msg = msgpack.packb({"Agent Ready": 1})
+        packed_msg = msgpack.packb({"ready": 1})
         self.socket.send(packed_msg)
 
     def recieve_response(self):
@@ -34,26 +37,21 @@ class DeepracerEnvHelper:
         self.zmq_client = DeepracerZMQClient()
         self.zmq_client.set_agent_ready()
         self.obs = None
-        self.previous_done = False
 
     def send_act_rcv_obs(self, action):
         action_dict = {"action": action}
         self.obs = self.zmq_client.send_msg(action_dict)
-        self.previous_done = self.obs['_game_over']
         return self.obs
     
     def env_reset(self):
         if self.obs is None: # First communication to zmq server
             self.obs = self.zmq_client.recieve_response()
-        elif self.previous_done: # To prevent dummy episode on already done env
-            pass
-        else: # Can't reset env before episode completes - Passing '1' until episode completes
-            action = 1
-            done = False
-            while not done:
-                self.obs = self.send_act_rcv_obs(action)
-                done = self.obs['_game_over']
-            self.previous_done = True
+            # Smaller timeout after first connection
+            self.zmq_client.socket.set(zmq.SNDTIMEO, 20000)  # 20s
+            self.zmq_client.socket.set(zmq.RCVTIMEO, 20000)
+
+        else: # If prev_episode done and reset called, fast forward one step for new episode
+            self.obs = self.send_act_rcv_obs(4) # Action ignored due to reset()
 
         return self.obs
     
@@ -69,7 +67,7 @@ class DeepracerEnvHelper:
 
 if __name__ == "__main__":
     client = DeepracerZMQClient()
-    packed_msg = msgpack.packb({"Ready": 1})
+    packed_msg = msgpack.packb({"ready": 1})
     client.socket.send(packed_msg)
     episodes_completed = 0
     steps_completed = 0
