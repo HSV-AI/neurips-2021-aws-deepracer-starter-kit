@@ -9,7 +9,13 @@ class DeepracerGymEnv(gym.Env):
     def __init__(self):
         self.action_space = gym.spaces.Discrete(5)
         self.deepracer_helper = DeepracerEnvHelper()
-        self.observation_space = gym.spaces.Box(float("-inf"), float("inf"), shape = (2, 120, 160,))
+        self.observation_space = gym.spaces.Box(
+            low=float(0), 
+            high=float(255), 
+            #shape=(2, 160, 120,),
+            shape=(120, 160, 2,),
+            dtype=np.uint8
+        )
         self.max_action_count = 0
         self.direction = 0
         self.points = []
@@ -21,9 +27,9 @@ class DeepracerGymEnv(gym.Env):
         observation = self.deepracer_helper.env_reset()
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(observation)
         obs_array = observation['STEREO_CAMERAS']
-        obs_array = np.swapaxes(obs_array, 0, 2)
+        #obs_array = np.swapaxes(obs_array, 0, 2)
         if len(self.actions) > self.max_action_count:
-            ic(self.points)
+            #ic(self.points)
             self.max_action_count = len(self.actions)
             with open('points.pkl', 'wb') as f:
                 pickle.dump(self.points, f)
@@ -39,7 +45,7 @@ class DeepracerGymEnv(gym.Env):
         rl_coach_obs = self.deepracer_helper.send_act_rcv_obs(action)
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(rl_coach_obs)
         obs_array = observation['STEREO_CAMERAS']
-        obs_array = np.swapaxes(obs_array, 0, 2)
+        #obs_array = np.swapaxes(obs_array, 0, 2)
         self.actions.append(action)
         self.current_point = self.new_point(action)
         self.points.append(self.current_point)

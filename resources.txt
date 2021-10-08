@@ -1,0 +1,2 @@
+Resources (best reward function found thus far)
+https://github.com/TwoDigits/deepracer
