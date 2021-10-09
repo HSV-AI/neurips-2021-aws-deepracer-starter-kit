@@ -20,6 +20,7 @@ class DeepracerGymEnv(gym.Env):
         self.direction = 0
         self.points = []
         self.actions = []
+        self.observations = []
         self.current_point = (0,0)
         self.points.append(self.current_point)
 
@@ -31,10 +32,14 @@ class DeepracerGymEnv(gym.Env):
         if len(self.actions) > self.max_action_count:
             #ic(self.points)
             self.max_action_count = len(self.actions)
+            filename = 'observations-'+"{:03d}".format(self.max_action_count)+'.pkl'
+            with open(filename, 'wb') as f:
+                pickle.dump(self.observations, f)
             with open('points.pkl', 'wb') as f:
                 pickle.dump(self.points, f)
         self.actions.clear()
         self.points.clear()
+        self.observations.clear()
         self.current_point = (0,0)
         self.points.append(self.current_point)
         self.direction = 0
@@ -49,6 +54,7 @@ class DeepracerGymEnv(gym.Env):
         self.actions.append(action)
         self.current_point = self.new_point(action)
         self.points.append(self.current_point)
+        self.observations.append(obs_array)
         return obs_array, reward, done, info
     
     def new_point(self, action):
@@ -66,7 +72,7 @@ class DeepracerGymEnv(gym.Env):
         
         self.direction += angle
 
-        return (self.current_point[0] + 0.6*math.cos(self.direction), self.current_point[1] + 0.6*math.sin(self.direction))
+        return (self.current_point[0] + 0.04*math.cos(self.direction), self.current_point[1] + 0.04*math.sin(self.direction))
 
 if __name__ == '__main__':
     env = DeepracerGymEnv()
