@@ -42,13 +42,14 @@ import pytorch_lightning as pl
 from pl_examples import cli_lightning_logo
 
 from icecream import ic
+import numpy as np
 
 def create_mlp(input_shape: Tuple[int], n_actions: int, hidden_size: int = 256):
     """Simple Multi-Layer Perceptron network."""
 
     ic(input_shape)
 
-    linear_input_size = input_shape[1] * input_shape[2]
+    linear_input_size = input_shape[0] * input_shape[1]
 
     network = nn.Sequential(
         nn.Flatten(-2), # 2 by image_height * image_width
@@ -59,7 +60,7 @@ def create_mlp(input_shape: Tuple[int], n_actions: int, hidden_size: int = 256):
         nn.Linear(hidden_size, hidden_size),
         nn.ReLU(),
         nn.Flatten(-2),
-        nn.Linear(hidden_size*input_shape[0], hidden_size),
+        nn.Linear(hidden_size*input_shape[2], hidden_size),
         nn.ReLU(),
         nn.Linear(hidden_size, n_actions),
     )
@@ -75,10 +76,11 @@ class RacerNet(nn.Module):
         super().__init__()
 
         self.conv_net = nn.Sequential(
-            nn.Conv2d(in_channels=input_shape[0], out_channels=16, kernel_size=3),
-            nn.BatchNorm2d(num_features=16),
-            nn.ReLU(),
-            nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3),
+            
+            nn.Conv2d(in_channels=input_shape[2], out_channels=64, kernel_size=7, stride=2, padding=3, bias=False),
+            nn.BatchNorm2d(num_features=64),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=64, out_channels=16, kernel_size=3),
             nn.BatchNorm2d(num_features=16),
             nn.ReLU(),
             nn.AvgPool2d(kernel_size=4)
@@ -89,14 +91,24 @@ class RacerNet(nn.Module):
 
     def forward(self, x):
 
-        if len(x.shape) < 4:
-            x.unsqueeze_(0)
-        elif len(x.shape) == 5:
-            x.squeeze_(1)
 
-        x = self.conv_net(x)
-        x = torch.flatten(x, start_dim=-3)
-        x = self.dense(x)
+        try:
+            if len(x.shape) < 4:
+                x = np.swapaxes(x, 0, 2)
+                x.unsqueeze_(0)
+            elif len(x.shape) == 4:
+                x = np.swapaxes(x, 1, 3)
+                x.squeeze_(1)
+
+            x = self.conv_net(x)
+            x = torch.flatten(x, start_dim=-3)
+            x = self.dense(x)
+
+        except RuntimeError:
+            ic(x.shape)
+            ic(x)
+            exit()
+
         return x.squeeze(0)
 
 
