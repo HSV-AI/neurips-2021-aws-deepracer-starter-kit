@@ -13,7 +13,8 @@ class DeepracerGymEnv(gym.Env):
             low=float(0), 
             high=float(255), 
             #shape=(2, 160, 120,),
-            shape=(120, 160, 2,),
+            #shape=(120, 160, 2, 1,),
+            shape=(1, 2, 120, 160,),
             dtype=np.uint8
         )
         self.max_action_count = 0
@@ -39,8 +40,17 @@ class DeepracerGymEnv(gym.Env):
         self.points.append(self.current_point)
         self.direction = 0
 
-        return obs_array
+        ic()
+        return self.reshape(obs_array)
     
+    @staticmethod
+    def reshape(obs):
+        obs = np.swapaxes(obs, 0, 2)
+        obs = np.swapaxes(obs, 2, 1)
+        obs = np.expand_dims(obs, axis=0)
+        ic(obs.shape)
+        return obs
+        
     def step(self, action):
         rl_coach_obs = self.deepracer_helper.send_act_rcv_obs(action)
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(rl_coach_obs)
@@ -49,7 +59,8 @@ class DeepracerGymEnv(gym.Env):
         self.actions.append(action)
         self.current_point = self.new_point(action)
         self.points.append(self.current_point)
-        return obs_array, reward, done, info
+        return self.reshape(obs_array), reward, done, info
+
     
     def new_point(self, action):
         angle = 0
