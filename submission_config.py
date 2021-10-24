@@ -1,4 +1,4 @@
-from agents.random_agent import RandomDeepracerAgent
+from hsvracer import HSVRacerAgent
 
 class SubmissionConfig:
-    submission_agent = RandomDeepracerAgent
+    submission_agent = HSVRacerAgent
