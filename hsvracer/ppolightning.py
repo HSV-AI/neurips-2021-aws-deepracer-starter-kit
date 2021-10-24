@@ -180,7 +180,7 @@ class PPOLightning(pl.LightningModule):
         self.avg_reward = 0
 
         observation = self.env.reset()
-        observation = observation['_next_state']['STEREO_CAMERAS']
+        observation = observation['STEREO_CAMERAS']
         self.state = torch.FloatTensor(observation)
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -299,7 +299,7 @@ class PPOLightning(pl.LightningModule):
                 self.episode_step = 0
 
                 observation = self.env.reset()
-                observation = observation['_next_state']['STEREO_CAMERAS']
+                observation = observation['STEREO_CAMERAS']
                 self.state = torch.FloatTensor(observation)
 
             if epoch_end:

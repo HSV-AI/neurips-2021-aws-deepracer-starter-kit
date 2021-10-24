@@ -17,7 +17,7 @@ class HSVRacerAgent(DeepracerAgent):
         pass
 
     def register_reset(self, observations):
-        observation = observations['_next_state']['STEREO_CAMERAS']
+        observation = observations['STEREO_CAMERAS']
         state = torch.FloatTensor(observation).to(self.device)
         with torch.no_grad():
             logits = self.model(state)
