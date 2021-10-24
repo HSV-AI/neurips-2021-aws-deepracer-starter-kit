@@ -41,8 +41,6 @@ from torch.utils.data import DataLoader, IterableDataset
 import pytorch_lightning as pl
 from pl_examples import cli_lightning_logo
 
-from torchsummary import summary
-
 from icecream import ic
 import numpy as np
 
