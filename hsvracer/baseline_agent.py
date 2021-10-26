@@ -9,7 +9,7 @@ from collections import deque
 class BaselineHSVRacerAgent(DeepracerAgent):
     def __init__(self):
         #filename = os.path.join(dirname, 'weights/all_actor_net.pt')
-        file_path = os.path.join('models/next.zip')
+        file_path = os.path.join('submit_models/best_model')
         self.model = PPO.load(file_path)
         self.stacked_frames = None
 
