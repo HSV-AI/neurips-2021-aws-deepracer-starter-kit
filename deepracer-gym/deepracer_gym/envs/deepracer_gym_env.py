@@ -6,15 +6,17 @@ from icecream import ic
 import pickle
 
 class DeepracerGymEnv(gym.Env):
-    def __init__(self):
+    def __init__(self, port=8888):
         self.action_space = gym.spaces.Discrete(5)
-        self.deepracer_helper = DeepracerEnvHelper()
+        self.deepracer_helper = DeepracerEnvHelper(port=port)
         self.observation_space = gym.spaces.Box(
             low=float(0), 
             high=float(255), 
             #shape=(2, 160, 120,),
             #shape=(120, 160, 2, 1,),
-            shape=(1, 2, 120, 160,),
+            #shape=(2, 120, 160,),
+            shape=(1, 120, 160,),
+            #shape=(1, 2, 120, 160,),
             dtype=np.uint8
         )
         self.max_action_count = 0
@@ -30,41 +32,45 @@ class DeepracerGymEnv(gym.Env):
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(observation)
         obs_array = observation['STEREO_CAMERAS']
         #obs_array = np.swapaxes(obs_array, 0, 2)
-        if len(self.actions) > self.max_action_count:
-            #ic(self.points)
-            self.max_action_count = len(self.actions)
-            filename = 'observations-'+"{:03d}".format(self.max_action_count)+'.pkl'
-            with open(filename, 'wb') as f:
-                pickle.dump(self.observations, f)
-            with open('points.pkl', 'wb') as f:
-                pickle.dump(self.points, f)
-        self.actions.clear()
-        self.points.clear()
-        self.observations.clear()
-        self.current_point = (0,0)
-        self.points.append(self.current_point)
         self.direction = 0
 
-        ic()
         return self.reshape(obs_array)
     
     @staticmethod
     def reshape(obs):
         obs = np.swapaxes(obs, 0, 2)
         obs = np.swapaxes(obs, 2, 1)
-        obs = np.expand_dims(obs, axis=0)
-        ic(obs.shape)
+        #obs = obs[1:]
+        #obs = np.reshape(obs, (1, 120*2, 160,))
+        #obs = np.reshape(obs, (1, 120, 160,))
+        #obs = np.expand_dims(obs, axis=0)
+        obs = obs[1:]
         return obs
         
     def step(self, action):
         rl_coach_obs = self.deepracer_helper.send_act_rcv_obs(action)
+        #ic(rl_coach_obs)
+        #exit()
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(rl_coach_obs)
         obs_array = observation['STEREO_CAMERAS']
         #obs_array = np.swapaxes(obs_array, 0, 2)
-        self.actions.append(action)
-        self.current_point = self.new_point(action)
-        self.points.append(self.current_point)
-        self.observations.append(obs_array)
+        #self.actions.append(action)
+        #self.current_point = self.new_point(action)
+        #self.points.append(self.current_point)
+        #self.observations.append(obs_array)
+        #return self.reshape(obs_array), reward, done, info
+        if reward > 1e-3 and done:
+            reward = 1
+        elif done:
+            reward = -1
+        else: 
+            reward = 0
+        if info['goal'] is not None:
+            ic(info['goal'])
+            ic(reward)
+            ic("GOOOOOOOOOOOAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLL")
+            print("GOOOOOOOOOOOAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLL")
+            reward += 101
         return self.reshape(obs_array), reward, done, info
 
     

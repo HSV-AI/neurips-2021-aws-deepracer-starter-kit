@@ -1,5 +1,5 @@
 services:
-  deepracer_1:
+  deepracer_19:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -7,11 +7,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5000:5000"
-      - "8888:8888"
+      #- "5019:5000"
+      - "8906:8888"
     command: /bin/bash
 
-  deepracer_2:
+  deepracer_20:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -19,11 +19,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5001:5000"
-      - "8889:8888"
+      #- "5020:5000"
+      - "8907:8888"
     command: /bin/bash
 
-  deepracer_3:
+  deepracer_21:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -31,11 +31,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5003:5000"
-      - "8890:8888"
+      #- "5021:5000"
+      - "8908:8888"
     command: /bin/bash
 
-  deepracer_4:
+  deepracer_22:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -43,11 +43,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5004:5000"
-      - "8891:8888"
+      #- "5022:5000"
+      - "8909:8888"
     command: /bin/bash
 
-  deepracer_5:
+  deepracer_23:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -55,11 +55,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5005:5000"
-      - "8892:8888"
+      #- "5023:5000"
+      - "8910:8888"
     command: /bin/bash
 
-  deepracer_6:
+  deepracer_24:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -67,11 +67,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5006:5000"
-      - "8893:8888"
+      #- "5024:5000"
+      - "8911:8888"
     command: /bin/bash
 
-  deepracer_7:
+  deepracer_25:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -79,11 +79,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5007:5000"
-      - "8894:8888"
+      #- "5025:5000"
+      - "8912:8888"
     command: /bin/bash
 
-  deepracer_8:
+  deepracer_26:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -91,11 +91,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5008:5000"
-      - "8895:8888"
+      #- "5026:5000"
+      - "8913:8888"
     command: /bin/bash
 
-  deepracer_9:
+  deepracer_27:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -103,11 +103,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5009:5000"
-      - "8896:8888"
+      #- "5027:5000"
+      - "8914:8888"
     command: /bin/bash
 
-  deepracer_10:
+  deepracer_28:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -115,11 +115,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5010:5000"
-      - "8897:8888"
+      #- "5028:5000"
+      - "8915:8888"
     command: /bin/bash
 
-  deepracer_11:
+  deepracer_29:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -127,11 +127,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5011:5000"
-      - "8898:8888"
+      #- "5029:5000"
+      - "8916:8888"
     command: /bin/bash
 
-  deepracer_12:
+  deepracer_30:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -139,11 +139,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5012:5000"
-      - "8899:8888"
+      #- "5030:5000"
+      - "8917:8888"
     command: /bin/bash
 
-  deepracer_13:
+  deepracer_31:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -151,11 +151,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5013:5000"
-      - "8900:8888"
+      #- "5031:5000"
+      - "8918:8888"
     command: /bin/bash
 
-  deepracer_14:
+  deepracer_32:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -163,11 +163,11 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5014:5000"
-      - "8901:8888"
+      #- "5032:5000"
+      - "8919:8888"
     command: /bin/bash
 
-  deepracer_15:
+  deepracer_33:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -175,11 +175,10 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5015:5000"
-      - "8902:8888"
-    command: /bin/bash
+      #- "5033:5000"
+      - "8920:8888"
 
-  deepracer_16:
+  deepracer_34:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -187,11 +186,10 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5016:5000"
-      - "8903:8888"
-    command: /bin/bash
+      #- "5034:5000"
+      - "8921:8888"
 
-  deepracer_17:
+  deepracer_35:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -199,11 +197,10 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5017:5000"
-      - "8904:8888"
-    command: /bin/bash
+      #- "5033:5000"
+      - "8922:8888"
 
-  deepracer_18:
+  deepracer_36:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
@@ -211,6 +208,5 @@ services:
           cpus: 3
           memory: 4g
     ports:
-      #- "5018:5000"
-      - "8905:8888"
-    command: /bin/bash
+      #- "5034:5000"
+      - "8923:8888"
