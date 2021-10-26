@@ -5,10 +5,11 @@ from torch.distributions import Categorical, Normal
 import torch
 from typing import Callable, Iterator, List, Tuple
 
-from hsvracer import HSVRacerAgent
+#from hsvracer import HSVRacerAgent
+from hsvracer import BaselineHSVRacerAgent
 import deepracer_gym
 
-agent = HSVRacerAgent()
+agent = BaselineHSVRacerAgent()
 
 env = gym.make('deepracer_gym:deepracer-v0')
 
