@@ -20,3 +20,6 @@ RUN adduser --disabled-password \
 USER ${USER}
 WORKDIR ${HOME_DIR}
 COPY --chown=1001:1001 . ${HOME_DIR}
+
+RUN apt-get update && apt-get install <apt.txt
+RUN pip install -r requirements.txt
