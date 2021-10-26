@@ -26,7 +26,7 @@ class BaselineHSVRacerAgent(DeepracerAgent):
         return obs
 
     def _get_action(self, observation):
-        #observation = self._reshape(observation)
+        observation = self._reshape(observation)
 
         if self.stacked_frames is None:
             self.stacked_frames = deque([observation, observation, observation, observation], maxlen=4)
@@ -43,5 +43,5 @@ class BaselineHSVRacerAgent(DeepracerAgent):
 
 
 if __name__ == '__main__':
-    agent = HSVRacerAgent()
+    agent = BaselineHSVRacerAgent()
     agent.register_reset()
