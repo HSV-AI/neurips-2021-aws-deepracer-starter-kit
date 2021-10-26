@@ -1,3 +1,4 @@
+from typing import Deque
 import gym
 from stable_baselines3.common import callbacks
 from stable_baselines3.common.callbacks import EvalCallback
@@ -92,9 +93,31 @@ def create_env_fn(port):
         return Monitor(env)
     return env_fn
 
+import numpy as np
 
-N_ENVS = 32
-EVAL_N_ENVS = 4
+class stacker(gym.Wrapper):
+    def __init__(self, env, stack_size=4):
+        super(stacker, self).__init__(env)
+        ic(env.observation_space.shape)
+        self.frames = None
+        self.observation_space = gym.spaces.Box(low=0, high=255., shape=(4,120,160), dtype=np.uint8)
+
+    def reset(self):
+        obs = self.env.reset() 
+        self.frames = Deque([obs] * 4, maxlen=4)
+        state = np.squeeze(np.stack(self.frames), axis=1)
+        return state
+
+    def step(self, action):
+        obs = self.env.step(action)
+        self.frames.append(obs)
+        state = np.squeeze(np.stack(self.frames), axis=1)
+        ic(state.shape)
+        return state
+
+
+N_ENVS = 28
+EVAL_N_ENVS = 8
 PORT = 8888
 STACK_SIZE = 4
 from time import sleep
@@ -112,7 +135,7 @@ def main():
     ic(env.observation_space.shape)
     env = VecFrameStack(env, n_stack=STACK_SIZE, channels_order='first')
     ic(env.observation_space.shape)
-    env = VecNormalize(env, norm_obs=True, norm_reward=False)
+    #env = VecNormalize(env, norm_obs=True, norm_reward=False)
     #env = stacked_observations(env, n_stack=3)
     ic(env.observation_space.shape)
     # TODO pass through info for stacker
@@ -124,7 +147,7 @@ def main():
     ic(eval_env.observation_space.shape)
     eval_env = VecFrameStack(eval_env, n_stack=STACK_SIZE, channels_order='first')
     ic(eval_env.observation_space.shape)
-    eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=False)
+    #eval_env = VecNormalize(eval_env, norm_obs=True, norm_reward=False)
     #eval_env = VecTransposeImage(eval_env)
     ic(eval_env.observation_space.shape)
     #rollout = (8192 * 1) // N_ENVS
@@ -137,7 +160,7 @@ def main():
         n_eval_episodes=EVAL_N_ENVS*4,
         eval_freq=(rollout*4),
         #log_path="./logs/",
-        best_model_save_path="models/",
+        best_model_save_path="37/models/",
         deterministic=True,
     )
     '''
