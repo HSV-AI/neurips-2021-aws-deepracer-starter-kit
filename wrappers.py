@@ -11,8 +11,7 @@ class Extractor(gym.ObservationWrapper):
 
     def observation(self, observation):
         obs = observation['STEREO_CAMERAS']
-        obs = np.swapaxes(obs, 0, 2)
-        obs = np.swapaxes(obs, 2, 1)
+        obs = np.moveaxis(obs, 2, 0)
         obs = obs / 255.
         assert(type(obs) == np.ndarray)
         return obs
@@ -39,6 +38,18 @@ class Stacker(gym.Wrapper):
         state = np.stack(self.frames)
         return state, reward, done, info
 
+class BasicRewardRework(gym.Wrapper):
+    def step(self, action):
+        self.steps += 1
+        obs, _reward, done, info = self.env.step(action)
+        if done and _reward > 0.001:
+            reward = 1.
+        elif done:
+            reward = -1.
+        else:
+            reward = 0.
+
+        return obs, reward, done, info
 class RewardRework(gym.Wrapper):
     def __init__(self, env, expected_steps=500):
         super().__init__(env)
