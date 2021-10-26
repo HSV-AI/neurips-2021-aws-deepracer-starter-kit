@@ -116,6 +116,29 @@ class stacker(gym.Wrapper):
         return state
 
 
+class RewardRework(gym.Wrapper):
+    def __init__(self, env, expected_steps=500):
+        super(RewardRework, self).__init__(env)
+        self.steps = 0
+        self.expected_steps = expected_steps
+
+    def step(self, action):
+        self.steps += 1
+        obs, _reward, done, info = self.env.step(action)
+        if done and _reward > 0.001:
+            reward = self.expected_steps / self.steps
+        elif done:
+            reward = -1
+        else:
+            reward = 0
+
+        return obs, reward, done, info
+
+    def reset(self):
+        obs = self.env.reset()
+        self.steps = 0
+        return obs
+
 N_ENVS = 28
 EVAL_N_ENVS = 8
 PORT = 8888
@@ -160,7 +183,7 @@ def main():
         n_eval_episodes=EVAL_N_ENVS*4,
         eval_freq=(rollout*4),
         #log_path="./logs/",
-        best_model_save_path="37/models/",
+        best_model_save_path="submit_models/",
         deterministic=True,
     )
     '''
