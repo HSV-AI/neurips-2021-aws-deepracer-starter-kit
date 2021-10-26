@@ -44,31 +44,6 @@ from pl_examples import cli_lightning_logo
 from icecream import ic
 import numpy as np
 
-def create_mlp(input_shape: Tuple[int], n_actions: int, hidden_size: int = 256):
-    """Simple Multi-Layer Perceptron network."""
-
-    ic(input_shape)
-
-    linear_input_size = input_shape[0] * input_shape[1]
-
-    network = nn.Sequential(
-        nn.Flatten(-2), # 2 by image_height * image_width
-        nn.Linear(linear_input_size, hidden_size),
-        nn.ReLU(),
-        nn.Linear(hidden_size, hidden_size),
-        nn.ReLU(),
-        nn.Linear(hidden_size, hidden_size),
-        nn.ReLU(),
-        nn.Flatten(-2),
-        nn.Linear(hidden_size*input_shape[2], hidden_size),
-        nn.ReLU(),
-        nn.Linear(hidden_size, n_actions),
-    )
-
-    ic(network)
-
-    return network
-
 class RacerNet(nn.Module):
     
     def __init__(self, input_shape: Tuple[int], n_actions: int, hidden_size: int = 256):
@@ -77,20 +52,24 @@ class RacerNet(nn.Module):
 
         self.conv_net = nn.Sequential(
             
-            nn.Conv2d(in_channels=input_shape[2], out_channels=64, kernel_size=7, stride=2, padding=3, bias=False),
-            nn.BatchNorm2d(num_features=64),
-            nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels=input_shape[2], out_channels=64, kernel_size=7, stride=2, padding=3),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=16, kernel_size=3),
-            nn.BatchNorm2d(num_features=16),
+            nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.AvgPool2d(kernel_size=4)
         )
 
-        ic(self.conv_net)
-        self.dense = nn.LazyLinear(n_actions)
+        self.fc_block = nn.Sequential(
+            nn.Linear(4256, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, n_actions)
+        )
 
     def forward(self, x):
-
 
         try:
             if len(x.shape) < 4:
@@ -102,12 +81,13 @@ class RacerNet(nn.Module):
 
             x = self.conv_net(x)
             x = torch.flatten(x, start_dim=-3)
-            x = self.dense(x)
+            x = self.fc_block(x)
 
-        except RuntimeError:
+        except RuntimeError as e:
             ic(x.shape)
             ic(x)
-            exit()
+            ic(e)
+            raise e
 
         return x.squeeze(0)
 
@@ -520,16 +500,26 @@ class PPOLightning(pl.LightningModule):
 
 
 def main(args) -> None:
-    model = PPOLightning(**vars(args))
 
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(dirpath="checkpoints", mode='max', monitor='avg_ep_len')
-    trainer = pl.Trainer(callbacks=[checkpoint_callback], gpus=1)
+    model = PPOLightning(**vars(args))
+    # model.load_from_checkpoint("max_length_checkpoints/epoch=42-step=343.ckpt")
+    # torch.save(model.actor.state_dict(), "actor.pt")
+    # torch.save(model.actor, "all_actor.pt")
+    # torch.save(model.actor.actor_net, "all_actor_net.pt")
+
+    # exit()
+
+    loss_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="min_loss_checkpoints_211021", mode='min', monitor='loss_actor')
+    length_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="max_length_checkpoints_211021", mode='max', monitor='avg_ep_len')
+    reward_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="max_reward_checkpoints_211021", mode='max', monitor='avg_reward')
+    # trainer = pl.Trainer(callbacks=[loss_checkpoint,length_checkpoint], gpus=1)
+    trainer = pl.Trainer(resume_from_checkpoint="max_length_checkpoints/epoch=42-step=343.ckpt", 
+        callbacks=[loss_checkpoint,length_checkpoint, reward_checkpoint], gpus=1)
     trainer.fit(model)
-    checkpoint_callback.best_model_path
 
     # trainer = pl.Trainer.from_argparse_args(args)
-    # trainer.fit(model)
-
+    # result = trainer.test(model=model, ckpt_path="max_length_checkpoints/epoch=42-step=343.ckpt", verbose=True)
+    # ic(result)
 
 if __name__ == "__main__":
     cli_lightning_logo()

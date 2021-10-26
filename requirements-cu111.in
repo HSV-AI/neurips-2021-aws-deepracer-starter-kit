@@ -5,3 +5,4 @@ torchaudio==0.9.1
 -f https://download.pytorch.org/whl/torch_stable.html
 pytorch_lightning
 stable-baselines3[extra]
+icecream

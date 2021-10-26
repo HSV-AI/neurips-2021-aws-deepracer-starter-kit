@@ -1,9 +1,6 @@
 import numpy as np
 import gym
-import math
 from deepracer_gym.zmq_client import DeepracerEnvHelper
-from icecream import ic
-import pickle
 
 class DeepracerGymEnv(gym.Env):
     def __init__(self, port=8888):
@@ -19,14 +16,7 @@ class DeepracerGymEnv(gym.Env):
             #shape=(1, 2, 120, 160,),
             dtype=np.uint8
         )
-        self.max_action_count = 0
-        self.direction = 0
-        self.points = []
-        self.actions = []
-        self.observations = []
-        self.current_point = (0,0)
-        self.points.append(self.current_point)
-
+    
     def reset(self):
         observation = self.deepracer_helper.env_reset()
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(observation)
