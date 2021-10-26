@@ -7,3 +7,4 @@ models/307.zip filter=lfs diff=lfs merge=lfs -text
 models/next.zip filter=lfs diff=lfs merge=lfs -text
 submit_models/best_model.zip filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/9f/c9/9fc937c3e940a536775f07e856ac70581e359179dc569d42c7baad83f411bc6c filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/80/79/8079300da7cdb5e9fad4786c31b6e43cae6ffde128b50ec2aecdf999512fa296 filter=lfs diff=lfs merge=lfs -text
