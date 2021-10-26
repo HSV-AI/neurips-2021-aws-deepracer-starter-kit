@@ -2,3 +2,6 @@ best_model.zip filter=lfs diff=lfs merge=lfs -text
 logs/best_model.zip filter=lfs diff=lfs merge=lfs -text
 models/best_model.zip filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/bc/7b/bc7b9893e0d76b62d60d9dbfd20201717da3730bd8c77c5f8fbf3141d0b3a230 filter=lfs diff=lfs merge=lfs -text
+37/models/best_model.zip filter=lfs diff=lfs merge=lfs -text
+models/307.zip filter=lfs diff=lfs merge=lfs -text
+models/next.zip filter=lfs diff=lfs merge=lfs -text
