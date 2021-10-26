@@ -91,8 +91,8 @@ import numpy as np
 import time as t
 
 
-N_ENVS = 32
-EVAL_N_ENVS = 32
+N_ENVS = 16
+EVAL_N_ENVS = 16
 PORT = 8888
 STACK_SIZE = 4
 from time import sleep
@@ -108,16 +108,18 @@ def main():
     # TODO pass through info for stacker
 
     eval_env = SubprocVecEnv(
-        [create_env_fn(PORT+idx) for idx in range(EVAL_N_ENVS)])
+        [create_env_fn(PORT+idx+N_ENVS) for idx in range(EVAL_N_ENVS)])
 
     ic(eval_env.observation_space.shape)
 
-    rollout = (8192*2) // N_ENVS
+    rollout = (8192*1) // N_ENVS
 
     ev_call = EvalCallback(
         eval_env,
         #n_eval_episodes=max(10, EVAL_N_ENVS*4),
-        n_eval_episodes=EVAL_N_ENVS*1,
+        #n_eval_episodes=EVAL_N_ENVS*1,
+        # NOTE doesn't need to be equal to envs since may fail a lot
+        n_eval_episodes=50,
         eval_freq=(rollout*4),
         #log_path="./logs/",
         best_model_save_path=f"models/{t.time()}",
