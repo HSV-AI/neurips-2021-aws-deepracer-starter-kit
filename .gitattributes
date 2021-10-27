@@ -12,3 +12,5 @@ models/1635289622.343127/best_model.zip filter=lfs diff=lfs merge=lfs -text
 submit_models/old_best_model.zip filter=lfs diff=lfs merge=lfs -text
 submit_models/515.05.zip filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/c9/b9/c9b9aaa938013b48c3369198236eba3e108b74517f5c0dd8295d25c83d180a9a filter=lfs diff=lfs merge=lfs -text
+submit_models/pending.zip filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/1e/7e/1e7e44634e72810fd0a4e2f6b7744fdf912ae3acdd18fe83520f07e32154752c filter=lfs diff=lfs merge=lfs -text
