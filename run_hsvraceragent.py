@@ -15,10 +15,13 @@ import click
 
 @click.command()
 @click.option('--model', help='Model file to use')
-@click.option('--port', default=8888, help='Port to connect to env on')
-def main(model, port):
+# NOTE no default port to keep from messing up training by 
+#      connecting to a running server
+@click.option('--port', help='Port to connect to env on')
+@click.option('--stack-size', default=4, help='Port to connect to env on')
+def main(model, port, stack_size):
 
-    agent = BaselineHSVRacerAgent(model)
+    agent = BaselineHSVRacerAgent(model, stack_size)
 
     env = gym.make('deepracer_gym:deepracer-v0', port=port)
     #env = Extractor(env)

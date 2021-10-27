@@ -16,3 +16,6 @@ submit_models/pending.zip filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/1e/7e/1e7e44634e72810fd0a4e2f6b7744fdf912ae3acdd18fe83520f07e32154752c filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/28/db/28db53af26761eba12eae972b57538b99c8ff242adbf32356e3107c2f65a2c4f filter=lfs diff=lfs merge=lfs -text
 models/1635302470.607659/best_model.zip filter=lfs diff=lfs merge=lfs -text
+models/1635317776.0289843/best_model.zip filter=lfs diff=lfs merge=lfs -text
+models/1635362062.6990376/best_model.zip filter=lfs diff=lfs merge=lfs -text
+models/1635310003.7901745/best_model.zip filter=lfs diff=lfs merge=lfs -text

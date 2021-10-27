@@ -14,9 +14,12 @@ class BaselineHSVRacerAgent(DeepracerAgent):
         #filename = os.path.join(dirname, 'weights/all_actor_net.pt')
         file_path = Path(model)
         self.model = PPO.load(str(file_path))
-        print(self.model.policy)
+        #print(self.model.policy)
         self.stacked_frames = None
         self.stack_size = stack_size
+        if stack_size is None:
+            self.stack_size = model.policy.feature_extraction.stack_size
+        
 
     def register_reset(self, observations):
         self.stacked_frames = None

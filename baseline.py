@@ -27,33 +27,37 @@ class CustomCNN(BaseFeaturesExtractor):
         # We assume CxHxW images (channels first)
         # Re-ordering will be done by pre-preprocessing or wrapper
         n_input_channels = observation_space.shape[0]
+        self.stack_size = observation_space.shape[0]
         sub_n_input_channels = observation_space.shape[1]
         ic(observation_space.shape)
 
         self.cnn = nn.Sequential(
-            nn.Conv3d(n_input_channels, 32, kernel_size=(2, 3, 3), stride=1),
+            # nn.Conv3d(n_input_channels, 64, kernel_size=(2, 3, 3), stride=1),
+            # nn.LeakyReLU(),
+
+            nn.Conv3d(n_input_channels, 64, kernel_size=(2, 5, 5), stride=(1, 2, 2)),
             nn.LeakyReLU(),
 
-            #nn.Conv3d(n_input_channels, 32, kernel_size=(2, 3, 3), padding=(1, 0, 0), stride=1),
-            #nn.LeakyReLU(),
+            # NOTE don't need padding and two gos on 3d conv
+            #      having more channels should accomplish the same thing
 
-            #nn.Conv3d(32, 64, kernel_size=(2, 3, 3), stride=1),
-            #nn.LeakyReLU(),
+            # nn.Conv3d(64, 64, kernel_size=(3, 3, 3), stride=1),
+            # nn.LeakyReLU(),
 
             nn.Flatten(1, 2),
 
-            nn.Conv2d(32, 32, kernel_size=5, stride=2),
+            nn.Conv2d(64, 128, kernel_size=5, stride=2),
             nn.LeakyReLU(),
             # nn.BatchNorm2d(64),
 
-            nn.Conv2d(32, 64, kernel_size=5, stride=2),
-            nn.LeakyReLU(),
-
-            nn.Conv2d(64, 128, kernel_size=5, stride=2),
-            nn.LeakyReLU(),
-
             nn.Conv2d(128, 256, kernel_size=5, stride=2),
             nn.LeakyReLU(),
+
+            nn.Conv2d(256, 256, kernel_size=5, stride=2),
+            nn.LeakyReLU(),
+
+            #nn.Conv2d(128, 256, kernel_size=5, stride=2),
+            #nn.LeakyReLU(),
 
             nn.Flatten(),
 
@@ -88,7 +92,7 @@ def create_env_fn(port, stack_size=4):
         env = gym.make("deepracer_gym:deepracer-v0", port=port)
         env = Extractor(env)
         #env = RewardRework(env)
-        env = Stacker(env, stack_size)
+        env = gym.wrappers.FrameStack(env, stack_size)
         env = Monitor(env)
         return env
     return env_fn
@@ -100,7 +104,7 @@ import time as t
 N_ENVS = 16
 EVAL_N_ENVS = 16
 PORT = 8888
-STACK_SIZE = 8
+STACK_SIZE = 4
 from time import sleep
 #env = gym.make("deepracer_gym:deepracer-v0")
 def main():
@@ -109,23 +113,23 @@ def main():
     #env_fn = create_env_fn()
     env = SubprocVecEnv(
         [create_env_fn(PORT+idx, stack_size=STACK_SIZE) for idx in range(N_ENVS)])
-    sleep(10)
     ic(env.observation_space.shape)
     # TODO pass through info for stacker
 
+    # NOTE OFFICIAL GUIANDANCE 1 AGENT = 1 ENV
     eval_env = SubprocVecEnv(
         [create_env_fn(PORT+idx+N_ENVS, stack_size=STACK_SIZE) for idx in range(EVAL_N_ENVS)])
 
     ic(eval_env.observation_space.shape)
 
-    rollout = (8192*1) // N_ENVS
+    rollout = (2048*8) // N_ENVS
 
     ev_call = EvalCallback(
         eval_env,
         #n_eval_episodes=max(10, EVAL_N_ENVS*4),
         #n_eval_episodes=EVAL_N_ENVS*1,
         # NOTE doesn't need to be equal to envs since may fail a lot
-        n_eval_episodes=50,
+        n_eval_episodes=100,
         eval_freq=(rollout*4),
         #log_path="./logs/",
         best_model_save_path=f"models/{t.time()}",
@@ -149,10 +153,10 @@ def main():
         env, 
         #n_steps=8192//N_ENVS,
         n_steps=rollout,
-        gamma=0.99,
+        gamma=0.999,
         #batch_size=256, #TODO is is batch size causing problems?
         batch_size=512,
-        n_epochs=4,
+        n_epochs=8,
         policy_kwargs=policy_kwargs,
         tensorboard_log="tensorboard_logs/baseline_eval",
         verbose=1)
