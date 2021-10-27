@@ -34,6 +34,12 @@ class CustomCNN(BaseFeaturesExtractor):
             nn.Conv3d(n_input_channels, 32, kernel_size=(2, 3, 3), stride=1),
             nn.LeakyReLU(),
 
+            #nn.Conv3d(n_input_channels, 32, kernel_size=(2, 3, 3), padding=(1, 0, 0), stride=1),
+            #nn.LeakyReLU(),
+
+            #nn.Conv3d(32, 64, kernel_size=(2, 3, 3), stride=1),
+            #nn.LeakyReLU(),
+
             nn.Flatten(1, 2),
 
             nn.Conv2d(32, 32, kernel_size=5, stride=2),
@@ -75,14 +81,14 @@ from stable_baselines3.common.vec_env import VecTransposeImage
 from stable_baselines3.common.vec_env.stacked_observations import StackedObservations
 from icecream import ic
 
-def create_env_fn(port):
+def create_env_fn(port, stack_size=4):
     ic(port)
     def env_fn():
         nonlocal port
         env = gym.make("deepracer_gym:deepracer-v0", port=port)
         env = Extractor(env)
         #env = RewardRework(env)
-        env = Stacker(env)
+        env = Stacker(env, stack_size)
         env = Monitor(env)
         return env
     return env_fn
@@ -94,7 +100,7 @@ import time as t
 N_ENVS = 16
 EVAL_N_ENVS = 16
 PORT = 8888
-STACK_SIZE = 4
+STACK_SIZE = 8
 from time import sleep
 #env = gym.make("deepracer_gym:deepracer-v0")
 def main():
@@ -102,13 +108,13 @@ def main():
     #env_checker = check_env(gym.make("deepracer_gym:deepracer-v0"))
     #env_fn = create_env_fn()
     env = SubprocVecEnv(
-        [create_env_fn(PORT+idx) for idx in range(N_ENVS)])
+        [create_env_fn(PORT+idx, stack_size=STACK_SIZE) for idx in range(N_ENVS)])
     sleep(10)
     ic(env.observation_space.shape)
     # TODO pass through info for stacker
 
     eval_env = SubprocVecEnv(
-        [create_env_fn(PORT+idx+N_ENVS) for idx in range(EVAL_N_ENVS)])
+        [create_env_fn(PORT+idx+N_ENVS, stack_size=STACK_SIZE) for idx in range(EVAL_N_ENVS)])
 
     ic(eval_env.observation_space.shape)
 
