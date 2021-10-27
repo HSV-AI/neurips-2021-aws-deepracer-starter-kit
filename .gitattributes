@@ -19,3 +19,4 @@ models/1635302470.607659/best_model.zip filter=lfs diff=lfs merge=lfs -text
 models/1635317776.0289843/best_model.zip filter=lfs diff=lfs merge=lfs -text
 models/1635362062.6990376/best_model.zip filter=lfs diff=lfs merge=lfs -text
 models/1635310003.7901745/best_model.zip filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/41/5e/415e0e119388ccfc3e4a62a096a06280a3e934bf5497175019d28e6d9938da05 filter=lfs diff=lfs merge=lfs -text
