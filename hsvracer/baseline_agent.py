@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from collections import deque
 
-DEFAULT_MODEL = "models/1635289622.343127/best_model"
+DEFAULT_MODEL = "submit_models/best_model"
 
 class BaselineHSVRacerAgent(DeepracerAgent):
     def __init__(self, model=DEFAULT_MODEL, stack_size=4):
