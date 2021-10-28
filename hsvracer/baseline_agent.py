@@ -10,7 +10,7 @@ from collections import deque
 DEFAULT_MODEL = "submit_models/best_model"
 
 class BaselineHSVRacerAgent(DeepracerAgent):
-    def __init__(self, model=DEFAULT_MODEL, stack_size=2):
+    def __init__(self, model=DEFAULT_MODEL, stack_size=None):
         #filename = os.path.join(dirname, 'weights/all_actor_net.pt')
         file_path = Path(model)
         self.model = PPO.load(str(file_path))
@@ -18,7 +18,7 @@ class BaselineHSVRacerAgent(DeepracerAgent):
         self.stacked_frames = None
         self.stack_size = stack_size
         if stack_size is None:
-            self.stack_size = model.policy.feature_extraction.stack_size
+            self.stack_size = self.model.policy.features_extractor.stack_size
         
 
     def register_reset(self, observations):

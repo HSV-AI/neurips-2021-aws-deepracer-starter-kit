@@ -2,94 +2,23 @@ import gym
 from stable_baselines3.common import callbacks
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.monitor import Monitor
-import torch as th
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import VecFrameStack, VecNormalize, DummyVecEnv
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env.subproc_vec_env import SubprocVecEnv
-from torch import nn
 from stable_baselines3.common.torch_layers import BaseFeaturesExtractor
 from stable_baselines3.common.env_checker import check_env
 from torchsummary import summary
 
 from wrappers import *
-
-class CustomCNN(BaseFeaturesExtractor):
-    """
-    :param observation_space: (gym.Space)
-    :param features_dim: (int) Number of features extracted.
-        This corresponds to the number of unit for the last layer.
-    """
-
-    def __init__(self, observation_space: gym.spaces.Box, features_dim: int = 512):
-        super(CustomCNN, self).__init__(observation_space, features_dim)
-        # We assume CxHxW images (channels first)
-        # Re-ordering will be done by pre-preprocessing or wrapper
-        n_input_channels = observation_space.shape[0]
-        self.stack_size = observation_space.shape[0]
-        sub_n_input_channels = observation_space.shape[1]
-        ic(observation_space.shape)
-
-        self.cnn = nn.Sequential(
-            # nn.Conv3d(n_input_channels, 64, kernel_size=(2, 3, 3), stride=1),
-            # nn.LeakyReLU(),
-
-            nn.Conv3d(n_input_channels, 32, kernel_size=(2, 5, 5), stride=(1, 2, 2)),
-            nn.LeakyReLU(),
-
-            # NOTE don't need padding and two gos on 3d conv
-            #      having more channels should accomplish the same thing
-
-            # nn.Conv3d(64, 64, kernel_size=(3, 3, 3), stride=1),
-            # nn.LeakyReLU(),
-
-            nn.Flatten(1, 2),
-
-            nn.Conv2d(32, 64, kernel_size=5, stride=2),
-            nn.LeakyReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1),
-            nn.LeakyReLU(),
-            # nn.BatchNorm2d(64),
-
-            nn.Conv2d(64, 128, kernel_size=5, stride=2),
-            nn.LeakyReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, stride=1),
-            nn.LeakyReLU(),
-
-            nn.Conv2d(128, 256, kernel_size=5, stride=2),
-            nn.LeakyReLU(),
-
-            #nn.Conv2d(128, 256, kernel_size=5, stride=2),
-            #nn.LeakyReLU(),
-
-            nn.Flatten(),
-
-        )
-        # TODO take in stero shape and stack after processing indv channels
-
-        # Compute shape by doing one forward pass
-        with th.no_grad():
-            n_flatten = self.cnn(
-                th.as_tensor(observation_space.sample()[None]).float()
-            ).shape[1]
-
-        self.linear = nn.Sequential(nn.Linear(n_flatten, features_dim), nn.LeakyReLU())
-
-    def forward(self, observations: th.Tensor) -> th.Tensor:
-        x = observations
-        x = self.cnn(x)
-        x = self.linear(x)
-        
-        #x = th.gather(x, 1, [0, 2, 4, 8, 16, 32, 48, 64, 80, 96, 112, 128])
-        return x
-
+from modules import *
 
 from stable_baselines3.common.vec_env import VecTransposeImage
 from stable_baselines3.common.vec_env.stacked_observations import StackedObservations
 from icecream import ic
 
-def create_env_fn(port, stack_size=4):
+def create_env_fn(port, stack_size):
     ic(port)
     def env_fn():
         nonlocal port
@@ -105,8 +34,8 @@ import numpy as np
 import time as t
 
 
-N_ENVS = 24
-EVAL_N_ENVS = 8
+N_ENVS = 16
+EVAL_N_ENVS = 4
 PORT = 8888
 STACK_SIZE = 2
 from time import sleep
@@ -133,8 +62,8 @@ def main():
         #n_eval_episodes=max(10, EVAL_N_ENVS*4),
         #n_eval_episodes=EVAL_N_ENVS*1,
         # NOTE doesn't need to be equal to envs since may fail a lot
-        n_eval_episodes=50,
-        eval_freq=(rollout*4),
+        n_eval_episodes=12,
+        eval_freq=(rollout*2),
         #log_path="./logs/",
         best_model_save_path=f"models/{t.time()}",
         deterministic=True,
@@ -143,7 +72,7 @@ def main():
         features_extractor_class=CustomCNN,
         features_extractor_kwargs=dict(features_dim=512),
         # TODO no shared feature extractor?
-        net_arch=[dict(pi=[256, 256], vf=[256, 256])]
+        net_arch=[dict(pi=[512, 512], vf=[512, 512])]
         #features_extractor_kwargs=dict(
             #net_arch=[dict(
                 #pi=[]
@@ -157,14 +86,19 @@ def main():
         env, 
         #n_steps=8192//N_ENVS,
         n_steps=rollout,
-        #gamma=0.999,
+        gamma=0.999,
+        #ent_coef=0.01,
         #batch_size=256, #TODO is is batch size causing problems?
-        batch_size=256,
-        #learning_rate=3e-5,
-        n_epochs=10,
+        batch_size=128,
+        learning_rate=1e-4,
+        n_epochs=8,
         policy_kwargs=policy_kwargs,
         tensorboard_log="tensorboard_logs/baseline_eval",
         verbose=1)
+    # NOTES
+    # 1. decreasing learning rate causes a stale out with large batch size
+    # 2. larger batch size alllows a larger learning rate
+    # 3. Big steps seem to make first eval WAY better
     ic(model.policy)
     summary(model.policy, env.observation_space.shape)
     model.learn(

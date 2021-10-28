@@ -14,7 +14,7 @@ import click
 
 
 @click.command()
-@click.option('--model', help='Model file to use')
+@click.option('--model', default='submit_models/best_model', help='Model file to use')
 # NOTE no default port to keep from messing up training by 
 #      connecting to a running server
 @click.option('--port', default=6000, help='Port to connect to env on')
