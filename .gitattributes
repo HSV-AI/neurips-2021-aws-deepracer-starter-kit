@@ -22,3 +22,5 @@ models/1635310003.7901745/best_model.zip filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/41/5e/415e0e119388ccfc3e4a62a096a06280a3e934bf5497175019d28e6d9938da05 filter=lfs diff=lfs merge=lfs -text
 models/1635375961.3944137/best_model.zip filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/19/5f/195f236d6f0ac1e59439db6407efced101f1d5780cb3925fcd9a743886f19380 filter=lfs diff=lfs merge=lfs -text
+submit_models/529.7.zip filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/e9/16/e916b15541f1441bb1cd79d8d38bb36b49c5da341b24442669b5f65f6d9f5ed2 filter=lfs diff=lfs merge=lfs -text
