@@ -10,7 +10,7 @@ from collections import deque
 DEFAULT_MODEL = "submit_models/best_model"
 
 class BaselineHSVRacerAgent(DeepracerAgent):
-    def __init__(self, model=DEFAULT_MODEL, stack_size=4):
+    def __init__(self, model=DEFAULT_MODEL, stack_size=2):
         #filename = os.path.join(dirname, 'weights/all_actor_net.pt')
         file_path = Path(model)
         self.model = PPO.load(str(file_path))
