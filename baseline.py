@@ -35,7 +35,7 @@ class CustomCNN(BaseFeaturesExtractor):
             # nn.Conv3d(n_input_channels, 64, kernel_size=(2, 3, 3), stride=1),
             # nn.LeakyReLU(),
 
-            nn.Conv3d(n_input_channels, 64, kernel_size=(2, 5, 5), stride=(1, 2, 2)),
+            nn.Conv3d(n_input_channels, 32, kernel_size=(2, 5, 5), stride=(1, 2, 2)),
             nn.LeakyReLU(),
 
             # NOTE don't need padding and two gos on 3d conv
@@ -46,14 +46,18 @@ class CustomCNN(BaseFeaturesExtractor):
 
             nn.Flatten(1, 2),
 
-            nn.Conv2d(64, 128, kernel_size=5, stride=2),
+            nn.Conv2d(32, 64, kernel_size=5, stride=2),
+            nn.LeakyReLU(),
+            nn.Conv2d(64, 64, kernel_size=3, stride=1),
             nn.LeakyReLU(),
             # nn.BatchNorm2d(64),
 
-            nn.Conv2d(128, 256, kernel_size=5, stride=2),
+            nn.Conv2d(64, 128, kernel_size=5, stride=2),
+            nn.LeakyReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1),
             nn.LeakyReLU(),
 
-            nn.Conv2d(256, 256, kernel_size=5, stride=2),
+            nn.Conv2d(128, 256, kernel_size=5, stride=2),
             nn.LeakyReLU(),
 
             #nn.Conv2d(128, 256, kernel_size=5, stride=2),
@@ -101,10 +105,10 @@ import numpy as np
 import time as t
 
 
-N_ENVS = 16
-EVAL_N_ENVS = 16
+N_ENVS = 24
+EVAL_N_ENVS = 8
 PORT = 8888
-STACK_SIZE = 4
+STACK_SIZE = 2
 from time import sleep
 #env = gym.make("deepracer_gym:deepracer-v0")
 def main():
@@ -129,7 +133,7 @@ def main():
         #n_eval_episodes=max(10, EVAL_N_ENVS*4),
         #n_eval_episodes=EVAL_N_ENVS*1,
         # NOTE doesn't need to be equal to envs since may fail a lot
-        n_eval_episodes=100,
+        n_eval_episodes=50,
         eval_freq=(rollout*4),
         #log_path="./logs/",
         best_model_save_path=f"models/{t.time()}",
@@ -153,10 +157,11 @@ def main():
         env, 
         #n_steps=8192//N_ENVS,
         n_steps=rollout,
-        gamma=0.999,
+        #gamma=0.999,
         #batch_size=256, #TODO is is batch size causing problems?
-        batch_size=512,
-        n_epochs=8,
+        batch_size=256,
+        #learning_rate=3e-5,
+        n_epochs=10,
         policy_kwargs=policy_kwargs,
         tensorboard_log="tensorboard_logs/baseline_eval",
         verbose=1)
