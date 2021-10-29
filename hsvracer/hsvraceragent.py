@@ -10,7 +10,7 @@ class HSVRacerAgent(DeepracerAgent):
     def __init__(self):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         dirname = os.path.dirname(__file__)
-        filename = os.path.join(dirname, 'weights/all_actor_net.pt')
+        filename = os.path.join(dirname, 'weights/max_reward.pt')
         self.model = torch.load(filename)
         self.model.to(self.device)
         self.model.eval()
