@@ -8,7 +8,7 @@ import os
 
 class HSVRacerAgent(DeepracerAgent):
     def __init__(self):
-        self.device = "cpu"
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         dirname = os.path.dirname(__file__)
         filename = os.path.join(dirname, 'weights/all_actor_net.pt')
         self.model = torch.load(filename)
@@ -21,15 +21,17 @@ class HSVRacerAgent(DeepracerAgent):
         state = torch.FloatTensor(observation).to(self.device)
         with torch.no_grad():
             logits = self.model(state)
-            pi = Categorical(logits=logits)
-            action = pi.sample()
-        return action.cpu().numpy()
+            action = torch.argmax(logits).item()
+            # pi = Categorical(logits=logits)
+            # action = pi.sample()
+        return action
 
     def compute_action(self, observations, info):
         observation = observations['STEREO_CAMERAS']
         state = torch.FloatTensor(observation).to(self.device)
         with torch.no_grad():
             logits = self.model(state)
-            pi = Categorical(logits=logits)
-            action = pi.sample()
-        return action.cpu().numpy()
+            action = torch.argmax(logits).item()
+            # pi = Categorical(logits=logits)
+            # action = pi.sample()
+        return action
