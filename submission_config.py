@@ -1,4 +1,4 @@
-from hsvracer import HSVRacerAgent
+from hsvracer import BaselineHSVRacerAgent
 
 class SubmissionConfig:
-    submission_agent = HSVRacerAgent
+    submission_agent = BaselineHSVRacerAgent

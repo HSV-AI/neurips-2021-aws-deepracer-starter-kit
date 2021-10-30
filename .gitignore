@@ -7,3 +7,4 @@ lightning_logs/
 tensorboard_logs/
 logs/*
 models/*
+playground/
