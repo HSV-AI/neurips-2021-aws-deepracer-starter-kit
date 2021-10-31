@@ -32,15 +32,7 @@ with open(sys.argv[1],'rb') as f:
 
         state = np.dstack([state, state, state])
 
-        state = cv2.putText(
-            state, #numpy array on which text is written
-            "Huntsville AI", #text
-            position, #position at which writing has to start
-            cv2.FONT_HERSHEY_PLAIN, #font family
-            1, #font size
-            (209, 80, 0, 255), #font color
-            1) #font stroke
-        
+        #out.write(edges)
         out.write(state)
     
     #closing all open windows 
