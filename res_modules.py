@@ -18,7 +18,7 @@ def activation_func(activation):
     ])[activation]
 
 class ResidualBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, activation='relu'):
+    def __init__(self, in_channels, out_channels, activation='leaky_relu'):
         super().__init__()
         self.in_channels, self.out_channels, self.activation = in_channels, out_channels, activation
         self.blocks = nn.Identity()
@@ -38,8 +38,10 @@ class ResidualBlock(nn.Module):
     def should_apply_shortcut(self):
         return self.in_channels != self.out_channels
 
+
 def conv_bn(in_channels, out_channels, conv, *args, **kwargs):
     return nn.Sequential(conv(in_channels, out_channels, *args, **kwargs), nn.BatchNorm2d(out_channels))
+
 
 class ResNetResidualBlock(ResidualBlock):
     def __init__(self, in_channels, out_channels, expansion=1, downsampling=1, conv=conv3x3, *args, **kwargs):

@@ -8,3 +8,6 @@ tensorboard_logs/
 logs/*
 models/*
 playground/
+wandb/
+videos/
+runs/

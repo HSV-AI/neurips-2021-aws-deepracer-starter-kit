@@ -18,7 +18,11 @@ class BaselineHSVRacerAgent(DeepracerAgent):
         self.stacked_frames = None
         self.stack_size = stack_size
         if stack_size is None:
-            self.stack_size = self.model.policy.features_extractor.stack_size
+            try:
+                self.stack_size = self.model.policy.features_extractor.stack_size
+            except AttributeError:
+                print("WARNING no stack_size attribute in policy")
+                stack_size = 4
         
 
     def register_reset(self, observations):
@@ -28,8 +32,9 @@ class BaselineHSVRacerAgent(DeepracerAgent):
     @staticmethod
     def _reshape(obs):
         obs = obs['STEREO_CAMERAS']
-        obs = np.moveaxis(obs, 2, 0)
-        obs = obs / 255.0
+        #obs = np.moveaxis(obs, 2, 0)
+        obs = obs[..., 0]
+        #obs = obs / 255.0
         return obs
 
     def _get_action(self, observation):

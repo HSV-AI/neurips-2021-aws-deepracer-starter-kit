@@ -2,41 +2,73 @@ import gym
 import numpy as np
 from collections import deque
  
-class Extractor(gym.ObservationWrapper):
+# class Extractor3D(gym.ObservationWrapper):
+#     def __init__(self, env: gym.Env) -> None:
+#         super().__init__(env)
+#         self.observation_space = gym.spaces.Box(
+#             low=0, high=1., shape=(2, 120, 160), dtype=np.float32
+#         )
+
+#     def observation(self, observation):
+#         obs = observation['STEREO_CAMERAS']
+#         obs = np.moveaxis(obs, 2, 0)
+#         obs = obs / 255.
+#         assert(type(obs) == np.ndarray)
+#         return obs
+
+class Extractor2D(gym.ObservationWrapper):
+
     def __init__(self, env: gym.Env) -> None:
         super().__init__(env)
         self.observation_space = gym.spaces.Box(
-            low=0, high=1., shape=(2, 120, 160), dtype=np.float32
+            #low=0, high=1., shape=(120, 160), dtype=np.float32
+            low=0, high=255, shape=(120, 160, 1), dtype=np.uint8
         )
+        self.last_obs = None
+        self.metadata = {'render.modes': ['rgb_array'], 'video.frames_per_second': 15 }
 
     def observation(self, observation):
         obs = observation['STEREO_CAMERAS']
-        obs = np.moveaxis(obs, 2, 0)
-        obs = obs / 255.
-        assert(type(obs) == np.ndarray)
+        #obs = np.moveaxis(obs, 1, 0)
+        obs = obs[..., 0:1]
+        self.last_obs = obs
+        #obs = obs / 255.
+        #obs = np.moveaxis(obs, 2, 0)
         return obs
 
-class Stacker(gym.Wrapper):
-    def __init__(self, env, stack_size=4):
-        super().__init__(env)
-        self.frames = None
-        self.observation_space = gym.spaces.Box(
-            low=0., high=1.,
-            shape=(stack_size, *self.env.observation_space.shape),
-        )
-        self.stack_size = stack_size
+    def render(self, mode='rgb_array'):
+        if mode == 'rgb_array':
+            #img = np.stack([self.last_obs]*3, axis=-1)
+            img = np.concatenate([self.last_obs]*3, axis=-1)
+            #assert img.shape == (120, 160, 3), f"{img.shape}"
+            #img = np.moveaxis(img, 2, 0)
+            #assert img.shape == (3, 120, 160)
 
-    def reset(self):
-        obs = self.env.reset()
-        self.frames = deque([obs] * self.stack_size, maxlen=self.stack_size)
-        state = np.stack(self.frames)
-        return state
+            #img = np.expand_dims(img, axis=0)
+            #assert img.shape == (1, 120, 160, 3)
+            #img = np.moveaxis(img, -1, 1)
+            return img
 
-    def step(self, action):
-        obs, reward, done, info = self.env.step(action)
-        self.frames.append(obs)
-        state = np.stack(self.frames)
-        return state, reward, done, info
+# class Stacker(gym.wrappers.FrameStack):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.last_obs = None
+    
+#     def step(self, action):
+#         obs, reward, done, info = super().step(action)
+#         self.last_obs = obs
+#         return obs, reward, done, info
+    
+#     def reset(self, **kwargs):
+#         obs = super().reset(**kwargs)
+#         self.last_obs = obs
+#         return obs
+    
+#     def render(self, mode='rgb_array'):
+#         if mode == 'rgb_array':
+#             img = np.stack([self.last_obs[-1]]*4, axis=-1)
+#             #print(img.shape)
+#             return img
 
 class BasicRewardRework(gym.Wrapper):
     def step(self, action):
