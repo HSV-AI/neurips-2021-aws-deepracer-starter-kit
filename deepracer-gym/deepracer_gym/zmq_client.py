@@ -8,7 +8,7 @@ m.patch()
 
 class DeepracerZMQClient:
     def __init__(self, host="127.0.0.1", port=8888):
-        print(f"port: {port}")
+        print(f"Connecting to deepracer at {host}:{port}")
         self.host = host
         self.port = port
         self.socket = zmq.Context().socket(zmq.REQ)

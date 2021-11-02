@@ -9,3 +9,6 @@ icecream
 torchsummary
 cloudpickle
 pickle5
+fasteners
+docker
+wandb
