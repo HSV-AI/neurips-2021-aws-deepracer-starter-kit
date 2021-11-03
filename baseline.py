@@ -270,6 +270,7 @@ def main(
     })
     eval_env.close_video_recorder()
     eval_env.close()
+    t.sleep(15)
     #eval_env.close()
     #run.finish()
 
