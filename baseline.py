@@ -64,7 +64,7 @@ from time import sleep
 @click.option('--gamma', default=0.99, help='Gamma')
 @click.option('--gae_lambda', default=0.95, help='GAE lambda')
 @click.option('--clip_range', default=0.2, help='Clip range')
-@click.option('--clip_range_vf', default=None, help='Clip range')
+#@click.option('--clip_range_vf', default=None, help='Clip range')
 @click.option('--ent_coef', default=0.01, help='Entropy coefficient')
 @click.option('--vf_coef', default=0.5, help='Value function coefficient')
 @click.option('--max_grad_norm', default=0.5, help='Max gradient norm')
@@ -85,7 +85,7 @@ def main(
     gamma,
     gae_lambda,
     clip_range,
-    clip_range_vf,
+    #clip_range_vf,
     ent_coef,
     vf_coef,
     max_grad_norm,
@@ -198,7 +198,7 @@ def main(
         gamma=gamma,
         ent_coef=ent_coef,
         clip_range=clip_range,
-        clip_range_vf=clip_range_vf,
+        #clip_range_vf=clip_range_vf,
         max_grad_norm=max_grad_norm,
         gae_lambda=gae_lambda,
         vf_coef=vf_coef,
