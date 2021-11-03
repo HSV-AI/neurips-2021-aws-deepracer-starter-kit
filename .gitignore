@@ -9,5 +9,6 @@ logs/*
 models/*
 playground/
 wandb/
+wandb_models/
 videos/
 runs/

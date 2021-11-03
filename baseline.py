@@ -55,38 +55,45 @@ from time import sleep
 #env = gym.make("deepracer_gym:deepracer-v0")
 @click.command()
 @click.option('--n_envs', default=8, help='Number of environments to run in parallel')
-@click.option('--stack_size', default=4, help='Number of frames to stack')
-@click.option('--eval_episodes', default=1000, help='Number of episodes to evaluate')
-@click.option('--port', default=8888, help='Starting port to use for the server')
-@click.option('--steps', default=1_000_000, help='Number of steps to run the agent')
-@click.option('--rollout', default=8192, help='Number of steps to rollout')
-@click.option('--max_grad_norm', default=0.5, help='Max gradient norm')
+
+# PPO Stuff
 @click.option('--learning_rate', default=0.0003, help='Learning rate')
+@click.option('--steps', default=1_000_000, help='Number of steps to run the agent')
+@click.option('--batch_size', default=256, help='Batch size')
+@click.option('--n_epochs', default=4, help='Number of epochs')
+@click.option('--gamma', default=0.99, help='Gamma')
 @click.option('--gae_lambda', default=0.95, help='GAE lambda')
 @click.option('--clip_range', default=0.2, help='Clip range')
-@click.option('--gamma', default=0.99, help='Gamma')
+@click.option('--clip_range_vf', default=None, help='Clip range')
 @click.option('--ent_coef', default=0.01, help='Entropy coefficient')
-@click.option('--n_epochs', default=4, help='Number of epochs')
 @click.option('--vf_coef', default=0.5, help='Value function coefficient')
-@click.option('--batch_size', default=256, help='Batch size')
+@click.option('--max_grad_norm', default=0.5, help='Max gradient norm')
+#@click.option('--use_sde', default=4, help='Number of frames to stack')
+
+@click.option('--port', default=8888, help='Starting port to use for the server')
+@click.option('--stack_size', default=4, help='Number of frames to stack')
+@click.option('--eval_episodes', default=1000, help='Number of episodes to evaluate')
+@click.option('--rollout', default=8192, help='Number of steps to rollout')
 @click.option('--normalize', default=False, help='Normalize')
 #@click.option('--redos', default=5, help='Number of times to redo the training')
 def main(
     n_envs,
+    learning_rate,
+    steps,
+    batch_size,
+    n_epochs,
+    gamma,
+    gae_lambda,
+    clip_range,
+    clip_range_vf,
+    ent_coef,
+    vf_coef,
+    max_grad_norm,
+
     port,
     stack_size,
     eval_episodes,
-    steps,
     rollout,
-    max_grad_norm,
-    learning_rate,
-    gae_lambda,
-    clip_range,
-    gamma,
-    ent_coef,
-    n_epochs,
-    vf_coef,
-    batch_size,
     normalize,
 
 ):
@@ -119,13 +126,14 @@ def main(
     if normalize:
         norm_env = VecNormalize(env, norm_obs=True, norm_reward=False, clip_obs=10.)
         ic(norm_env.observation_space.shape)
+        env = norm_env
 
-    env = VecFrameStack(norm_env, n_stack=stack_size) #, channels_order='last')
+    env = VecFrameStack(env, n_stack=stack_size) #, channels_order='last')
     ic(env.observation_space.shape)
 
     video_count = 10
     video_freq = steps // video_count
-    env = VecVideoRecorder(env, 'videos/train', record_video_trigger=lambda x: x % (video_freq // n_envs) == 0, video_length=550)
+    env = VecVideoRecorder(env, f'videos/{run.id}train', record_video_trigger=lambda x: x % (video_freq // n_envs) == 0, video_length=550)
     # env.reset()
     # ic(env.render(mode='rgb_array').shape)
     ic(env.observation_space.shape)
@@ -190,6 +198,7 @@ def main(
         gamma=gamma,
         ent_coef=ent_coef,
         clip_range=clip_range,
+        clip_range_vf=clip_range_vf,
         max_grad_norm=max_grad_norm,
         gae_lambda=gae_lambda,
         vf_coef=vf_coef,
@@ -221,12 +230,15 @@ def main(
     )
     ic('done training.')
     if normalize:
-        norm_path = f"wandb_models/{run.id}/normalize_stuff.pkl"
+        ic('saving normalizer')
+        norm_path = f"wandb_models/{run.id}/vec_normalizer.pkl"
+        ic(norm_path)
         norm_env.save(norm_path)
-        wandb.log_artifact(norm_path)
+        #artifact = wandb.Artifact(norm_path)
+        #artifact.add_file(norm_path)
+        wandb.save(norm_path)
 
     env.close_video_recorder()
-    env.close()
     del env
 
     eval_env = SubprocVecEnv(
@@ -236,7 +248,7 @@ def main(
         eval_env.training = False
         eval_env.norm_reward = False
     eval_env = VecFrameStack(eval_env, n_stack=stack_size)
-    eval_env = VecVideoRecorder(eval_env, 'videos/eval', record_video_trigger=lambda x: True, video_length=999999999)
+    eval_env = VecVideoRecorder(eval_env, f'videos/{run.id}/eval', record_video_trigger=lambda x: True, video_length=999999999)
 
     ic('evaluating...')
     episode_rewards, episode_lengths = evaluate_policy(model, eval_env, n_eval_episodes=eval_episodes, deterministic=True, return_episode_rewards=True)
@@ -255,6 +267,7 @@ def main(
         "eval/lengths": wandb.Histogram(episode_lengths),
     })
     eval_env.close_video_recorder()
+    eval_env.close()
     #run.finish()
 
 if __name__ == '__main__':

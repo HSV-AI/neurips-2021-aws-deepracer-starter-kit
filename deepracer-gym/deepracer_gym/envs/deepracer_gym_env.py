@@ -60,6 +60,7 @@ class DeepracerGymEnv(gym.Env):
     def close(self):
         self.container.stop()
         self.container.remove()
+
     
     def __del__(self):
         self.close()
