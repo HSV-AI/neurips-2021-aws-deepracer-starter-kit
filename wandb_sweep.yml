@@ -6,7 +6,7 @@ parameters:
   n_envs: 
     value: 4
   eval_episodes:
-    value: 250
+    value: 200
   batch_size:
     values:
     - 4
