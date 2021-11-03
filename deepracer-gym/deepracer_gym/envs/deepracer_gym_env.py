@@ -37,13 +37,14 @@ class DeepracerGymEnv(gym.Env):
 
         #time.sleep(wait_time)
         # find nearest open port
+        self.container = None
         with self.lock:
             while is_port_in_use(port):
                 # TODO could be a race condition here
                 port += 1
             self.container = start_container(port)
             # Give time for container to get port
-            time.sleep(10)
+            time.sleep(15)
 
         self.deepracer_helper = DeepracerEnvHelper(port=port)
     
@@ -57,9 +58,16 @@ class DeepracerGymEnv(gym.Env):
         observation, reward, done, info = self.deepracer_helper.unpack_rl_coach_obs(rl_coach_obs)
         return observation, reward, done, info
     
+    def close_container(self):
+        if self.container:
+            self.container.stop()
+            self.container.remove()
+            self.container = None
+
     def close(self):
-        self.container.stop()
-        self.container.remove()
+        #self.container.stop()
+        #self.container.remove(force=True)
+        self.close_container()
 
     
     def __del__(self):

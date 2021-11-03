@@ -239,7 +239,9 @@ def main(
         wandb.save(norm_path)
 
     env.close_video_recorder()
-    del env
+    env.close()
+    t.sleep(20)
+    #del env
 
     eval_env = SubprocVecEnv(
         [create_env_fn(port+idx) for idx in range(n_envs)])
@@ -268,6 +270,7 @@ def main(
     })
     eval_env.close_video_recorder()
     eval_env.close()
+    #eval_env.close()
     #run.finish()
 
 if __name__ == '__main__':
