@@ -6,6 +6,13 @@ class DeepracerGymEnv(gym.Env):
     def __init__(self, port=8888):
         self.action_space = gym.spaces.Discrete(5)
         self.deepracer_helper = DeepracerEnvHelper(port=port)
+        self.observation_space = gym.spaces.Box(
+            low=float(0), 
+            high=float(255), 
+            #shape=(2, 160, 120,),
+            shape=(120, 160, 2,),
+            dtype=np.uint8
+        )
     
     def reset(self):
         observation = self.deepracer_helper.env_reset()

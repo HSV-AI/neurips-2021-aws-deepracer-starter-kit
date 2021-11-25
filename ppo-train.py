@@ -24,13 +24,10 @@ model = PPOLightning(**vars(args))
 
 eval_env = gym.make('deepracer_gym:deepracer-v0', port=8889)
 eval_callback = EvaluationCallback(env=eval_env)
-loss_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="min_loss_checkpoints2", mode='min', monitor='loss_actor')
-length_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="max_length_checkpoints2", mode='max', monitor='avg_ep_len')
-reward_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="max_reward_checkpoints2", mode='max', monitor='avg_reward')
-eval_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="eval_reward_checkpoints2", mode='max', monitor='eval_avg_reward')
+length_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="max_length_checkpoints", mode='max', monitor='avg_ep_len')
+reward_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="max_reward_checkpoints", mode='max', monitor='avg_reward')
+eval_checkpoint = pl.callbacks.ModelCheckpoint(dirpath="eval_reward_checkpoints", mode='max', monitor='eval_avg_reward')
 
-# trainer = pl.Trainer(resume_from_checkpoint="deepracer-gym/max_length_checkpoints/epoch=42-step=343.ckpt", 
-#     callbacks=[loss_checkpoint,length_checkpoint, reward_checkpoint], gpus=1)
-trainer = pl.Trainer(resume_from_checkpoint="max_reward_checkpoints/epoch=756-step=6055.ckpt",
-    callbacks=[eval_callback, eval_checkpoint, loss_checkpoint,length_checkpoint, reward_checkpoint], gpus=1)
+trainer = pl.Trainer(#resume_from_checkpoint="eval_reward_checkpoints2/epoch=759-step=6079.ckpt",
+    callbacks=[eval_callback, eval_checkpoint, length_checkpoint, reward_checkpoint], gpus=1)
 trainer.fit(model)

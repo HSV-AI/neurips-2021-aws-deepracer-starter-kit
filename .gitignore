@@ -8,3 +8,4 @@ tensorboard_logs/
 logs/*
 models/*
 playground/
+**/*.ckpt

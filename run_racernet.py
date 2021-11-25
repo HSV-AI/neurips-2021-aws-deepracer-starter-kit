@@ -31,7 +31,7 @@ total_reward = 0
 
 while episodes_completed < 5:
 
-    observation, reward, done, info = env.step(action.cpu().numpy())
+    observation, reward, done, info = env.step(action)
 
     observation = observation['STEREO_CAMERAS']
 

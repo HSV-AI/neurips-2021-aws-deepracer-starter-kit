@@ -43,6 +43,9 @@ from pl_examples import cli_lightning_logo
 
 from icecream import ic
 import numpy as np
+import pickle
+import cv2
+
 
 from .racernet import RacerNet
 
@@ -93,7 +96,6 @@ class ExperienceSourceDataset(IterableDataset):
     def __iter__(self) -> Iterator:
         iterator = self.generate_batch()
         return iterator
-
 
 class PPOLightning(pl.LightningModule):
     """PyTorch Lightning implementation of PPO.
@@ -181,7 +183,11 @@ class PPOLightning(pl.LightningModule):
 
         observation = self.env.reset()
         observation = observation['STEREO_CAMERAS']
-        self.state = torch.FloatTensor(observation)
+        observation = np.swapaxes(observation, 0, 2)
+
+        edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
+        edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
+        self.state = torch.FloatTensor([edges_0, edges_1])
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Passes in a state x through the network and returns the policy and a sampled action.
@@ -253,15 +259,12 @@ class PPOLightning(pl.LightningModule):
             next_state, reward, done, _ = self.env.step(action.cpu().numpy())
 
             next_state = next_state['STEREO_CAMERAS']
+            next_state = np.swapaxes(next_state, 0, 2)
 
+            edges_0 = cv2.Canny(image=next_state[0], threshold1=100, threshold2=200) # Canny Edge Detection
+            edges_1 = cv2.Canny(image=next_state[1], threshold1=100, threshold2=200) # Canny Edge Detection
+            next_state = torch.FloatTensor([edges_0, edges_1])
             self.episode_step += 1
-
-            # If done and reward > 0.001, it means we completed a lap. Add to the reward
-            # using a higher value for smaller number of steps.
-            if done and reward > 0.001:
-                reward = reward + (600-self.episode_step)
-                self.min_steps_to_complete = self.episode_step
-                torch.save(self.actor.actor_net, str(self.episode_step)+"_actor_net.pt")
 
             self.batch_states.append(self.state)
             self.batch_actions.append(action)
@@ -300,7 +303,11 @@ class PPOLightning(pl.LightningModule):
 
                 observation = self.env.reset()
                 observation = observation['STEREO_CAMERAS']
-                self.state = torch.FloatTensor(observation)
+                observation = np.swapaxes(observation, 0, 2)
+
+                edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
+                edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
+                self.state = torch.FloatTensor([edges_0, edges_1])
 
             if epoch_end:
                 train_data = zip(
@@ -408,7 +415,7 @@ class PPOLightning(pl.LightningModule):
         parser.add_argument("--lam", type=float, default=0.95, help="advantage discount factor")
         parser.add_argument("--lr_actor", type=float, default=3e-4, help="learning rate of actor network")
         parser.add_argument("--lr_critic", type=float, default=1e-3, help="learning rate of critic network")
-        parser.add_argument("--max_episode_len", type=int, default=1000, help="capacity of the replay buffer")
+        parser.add_argument("--max_episode_len", type=int, default=600, help="capacity of the replay buffer")
         parser.add_argument("--batch_size", type=int, default=256, help="batch_size when training network")
         parser.add_argument(
             "--steps_per_epoch",

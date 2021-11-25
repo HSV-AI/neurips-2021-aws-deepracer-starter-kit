@@ -5,12 +5,14 @@ from torch.distributions import Categorical, Normal
 import torch
 from typing import Callable, Iterator, List, Tuple
 
-#from hsvracer import HSVRacerAgent
-from hsvracer import BaselineHSVRacerAgent
+from hsvracer import HSVRacerAgent
+# from hsvracer import BaselineHSVRacerAgent
 import deepracer_gym
 from wrappers import *
 import click
 
+
+# import pytorch_lightning as pl
 
 
 @click.command()
@@ -18,7 +20,9 @@ import click
 @click.option('--port', default=8888, help='Port to connect to env on')
 def main(model, port):
 
-    agent = BaselineHSVRacerAgent(model)
+    # pl.seed_everything(0)
+    # agent = BaselineHSVRacerAgent(model)
+    agent = HSVRacerAgent()
 
     env = gym.make('deepracer_gym:deepracer-v0', port=port)
     #env = Extractor(env)
@@ -46,7 +50,8 @@ def main(model, port):
                 "Episodes Completed:", episodes_completed, 
                 "Steps:", steps_completed, 
                 "Total Reward", total_reward, 
-                "Current Reward", reward)
+                "Current Reward", reward,
+                "Avg Reward", total_reward / steps_completed)
 
             steps_completed = 0
             total_reward = 0

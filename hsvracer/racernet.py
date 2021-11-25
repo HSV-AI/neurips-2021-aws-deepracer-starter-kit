@@ -13,12 +13,12 @@ class RacerNet(nn.Module):
         self.conv_net = nn.Sequential(
             
             nn.Conv2d(in_channels=input_shape[2], out_channels=64, kernel_size=7, stride=2, padding=3),
-            nn.BatchNorm2d(64),
+            # nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=16, kernel_size=3),
-            nn.BatchNorm2d(16),
+            # nn.BatchNorm2d(16),
             nn.ReLU(),
-            nn.AvgPool2d(kernel_size=4)
+            nn.AvgPool2d(kernel_size=4) # TODO - TAKE THIS OUT LATER
         )
 
         self.fc_block = nn.Sequential(
@@ -30,14 +30,17 @@ class RacerNet(nn.Module):
         )
 
     def forward(self, x):
-
         try:
             if len(x.shape) < 4:
-                x = np.swapaxes(x, 0, 2)
+                # x = np.swapaxes(x, 0, 2)
                 x.unsqueeze_(0)
             elif len(x.shape) == 4:
-                x = np.swapaxes(x, 1, 3)
+                # x = np.swapaxes(x, 1, 3)
                 x.squeeze_(1)
+            elif len(x.shape) == 5:
+                x.squeeze_(1)
+                x.squeeze_(2)
+                # x = np.swapaxes(x, 1, 3)
 
             x = self.conv_net(x)
             x = torch.flatten(x, start_dim=-3)
