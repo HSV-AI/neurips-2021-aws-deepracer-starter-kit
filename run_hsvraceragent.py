@@ -6,7 +6,6 @@ import torch
 from typing import Callable, Iterator, List, Tuple
 
 from hsvracer import HSVRacerAgent
-# from hsvracer import BaselineHSVRacerAgent
 import deepracer_gym
 from wrappers import *
 import click
@@ -21,7 +20,6 @@ import click
 def main(model, port):
 
     # pl.seed_everything(0)
-    # agent = BaselineHSVRacerAgent(model)
     agent = HSVRacerAgent()
 
     env = gym.make('deepracer_gym:deepracer-v0', port=port)
