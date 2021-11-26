@@ -43,11 +43,15 @@ class EvaluationCallback(Callback):
             # Get the action to take from the model
             observation = observations['STEREO_CAMERAS']
             observation = np.swapaxes(observation, 0, 2)
-            state = torch.FloatTensor(observation).to(model.device)
+            edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
+            edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
+            state = torch.FloatTensor([edges_0, edges_1]).to(model.device)
 
-            pi, action, value = model(state)
-            # action = model(state)
+            # observation = np.swapaxes(observation, 0, 2)
+            # state = torch.FloatTensor(observation).to(model.device)
 
+            # pi, action, value = model(state)
+            action = model.actor.actor_net(state)
             action = int(torch.argmax(action).item())
 
             # Pass the action to the env step and get the observations and done

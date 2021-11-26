@@ -16,7 +16,7 @@ from hsvracer import PPOLightning
 pl.seed_everything(0)
 device = "cuda"
 
-model = PPOLightning.load_from_checkpoint("eval_reward_checkpoints/epoch=469-step=3759.ckpt")
+model = PPOLightning.load_from_checkpoint("eval_reward_checkpoints/epoch=336-step=2695.ckpt")
 model.eval()
 model.to(device)
 
@@ -30,7 +30,9 @@ edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Cann
 state = torch.FloatTensor([edges_0, edges_1]).to(device)
 
 with torch.no_grad():
-    pi, action, value = model(state)
+    action = model.actor.actor_net(state)
+    action = int(torch.argmax(action).item())
+    # pi, action, value = model(state)
 
 print("Deepracer Environment Connected succesfully")
 
@@ -40,7 +42,7 @@ total_reward = 0
 
 while episodes_completed < 5:
 
-    observations, reward, done, info = env.step(action.cpu().numpy())
+    observations, reward, done, info = env.step(action)
     # observations, reward, done, info = env.step(torch.argmax(action).item())
     observation = observations['STEREO_CAMERAS']
     observation = np.swapaxes(observation, 0, 2)
@@ -64,4 +66,7 @@ while episodes_completed < 5:
         state = torch.FloatTensor([edges_0, edges_1]).to(device)
 
     with torch.no_grad():
-        pi, action, value = model(state)
+        action = model.actor.actor_net(state)
+        action = int(torch.argmax(action).item())
+
+        # pi, action, value = model(state)
