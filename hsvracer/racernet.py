@@ -3,6 +3,7 @@ from torch import nn
 from typing import Callable, Iterator, List, Tuple
 from icecream import ic
 import numpy as np
+from torch.nn.modules.linear import Identity
 
 class RacerNet(nn.Module):
     
@@ -11,22 +12,25 @@ class RacerNet(nn.Module):
         super().__init__()
 
         self.conv_net = nn.Sequential(
-            
             nn.Conv2d(in_channels=input_shape[2], out_channels=64, kernel_size=7, stride=2, padding=3),
-            # nn.BatchNorm2d(64),
             nn.ReLU(),
-            nn.Conv2d(in_channels=64, out_channels=16, kernel_size=3),
-            # nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.AvgPool2d(kernel_size=4) # TODO - TAKE THIS OUT LATER
         )
 
+        self.res_block = nn.Sequential(
+            nn.Conv2d(in_channels=64, out_channels=32, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=32, out_channels=16, kernel_size=3, padding=1)
+        )
+
+        self.relu = nn.ReLU()
+
         self.fc_block = nn.Sequential(
-            nn.Linear(4256, hidden_size),
+            # nn.Linear(4256, hidden_size),
+            nn.Linear(51200, hidden_size),
             nn.ReLU(),
-            nn.Linear(hidden_size, hidden_size),
+            nn.Linear(hidden_size, 128),
             nn.ReLU(),
-            nn.Linear(hidden_size, n_actions)
+            nn.Linear(128, n_actions)
         )
 
     def forward(self, x):
@@ -43,6 +47,12 @@ class RacerNet(nn.Module):
                 # x = np.swapaxes(x, 1, 3)
 
             x = self.conv_net(x)
+            # identity = x
+            x = self.res_block(x)
+            # ic(identity.shape)
+            # ic(x.shape)
+            # x += identity
+            x = self.relu(x)
             x = torch.flatten(x, start_dim=-3)
             x = self.fc_block(x)
 

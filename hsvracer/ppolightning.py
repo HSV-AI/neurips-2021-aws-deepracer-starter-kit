@@ -184,10 +184,11 @@ class PPOLightning(pl.LightningModule):
         observation = self.env.reset()
         observation = observation['STEREO_CAMERAS']
         observation = np.swapaxes(observation, 0, 2)
-
-        edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-        edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-        self.state = torch.FloatTensor([edges_0, edges_1])
+        left = observation[0][:,40:] / 255
+        left += np.random.normal(.5, .25, left.shape)
+        right = observation[1][:,40:] / 255
+        right += np.random.normal(.5, .25, right.shape)
+        self.state = torch.FloatTensor([left, right])
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Passes in a state x through the network and returns the policy and a sampled action.
@@ -258,12 +259,15 @@ class PPOLightning(pl.LightningModule):
 
             next_state, reward, done, _ = self.env.step(action.cpu().numpy())
 
-            next_state = next_state['STEREO_CAMERAS']
-            next_state = np.swapaxes(next_state, 0, 2)
+            observation = next_state['STEREO_CAMERAS']
+            observation = np.swapaxes(observation, 0, 2)
 
-            edges_0 = cv2.Canny(image=next_state[0], threshold1=100, threshold2=200) # Canny Edge Detection
-            edges_1 = cv2.Canny(image=next_state[1], threshold1=100, threshold2=200) # Canny Edge Detection
-            next_state = torch.FloatTensor([edges_0, edges_1])
+            left = observation[0][:,40:] / 255
+            left += np.random.normal(.5, .25, left.shape)
+            right = observation[1][:,40:] / 255
+            right += np.random.normal(.5, .25, right.shape)
+            next_state = torch.FloatTensor([left, right])
+
             self.episode_step += 1
 
             self.batch_states.append(self.state)
@@ -305,9 +309,11 @@ class PPOLightning(pl.LightningModule):
                 observation = observation['STEREO_CAMERAS']
                 observation = np.swapaxes(observation, 0, 2)
 
-                edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-                edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-                self.state = torch.FloatTensor([edges_0, edges_1])
+                left = observation[0][:,40:] / 255
+                left += np.random.normal(.5, .25, left.shape)
+                right = observation[1][:,40:] / 255
+                right += np.random.normal(.5, .25, right.shape)
+                self.state = torch.FloatTensor([left, right])
 
             if epoch_end:
                 train_data = zip(

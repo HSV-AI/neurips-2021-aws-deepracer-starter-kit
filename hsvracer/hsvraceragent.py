@@ -22,10 +22,9 @@ class HSVRacerAgent(DeepracerAgent):
     def register_reset(self, observations):
         observation = observations['STEREO_CAMERAS']
         observation = np.swapaxes(observation, 0, 2)
-
-        edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-        edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-        state = torch.FloatTensor([edges_0, edges_1]).to(self.device)
+        left = observation[0][:,40:] / 255
+        right = observation[1][:,40:] / 255
+        state = torch.FloatTensor([left, right]).to(self.device)
 
         with torch.no_grad():
             # logits = self.model(state)
@@ -40,9 +39,9 @@ class HSVRacerAgent(DeepracerAgent):
     def compute_action(self, observations, info):
         observation = observations['STEREO_CAMERAS']
         observation = np.swapaxes(observation, 0, 2)
-        edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-        edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-        state = torch.FloatTensor([edges_0, edges_1]).to(self.device)
+        left = observation[0][:,40:] / 255
+        right = observation[1][:,40:] / 255
+        state = torch.FloatTensor([left, right]).to(self.device)
         with torch.no_grad():
             # logits = self.model(state)
             # pi = Categorical(logits=logits)

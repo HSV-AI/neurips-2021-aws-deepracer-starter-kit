@@ -30,9 +30,6 @@ class EvaluationCallback(Callback):
         steps_completed = 0
         total_reward = 0
 
-        # torch.set_grad_enabled(False)
-        # model.eval()
-
         # Do the initial reset        
         observations = self.env.reset()
 
@@ -43,14 +40,10 @@ class EvaluationCallback(Callback):
             # Get the action to take from the model
             observation = observations['STEREO_CAMERAS']
             observation = np.swapaxes(observation, 0, 2)
-            edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-            edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-            state = torch.FloatTensor([edges_0, edges_1]).to(model.device)
+            left = observation[0][:,40:] / 255
+            right = observation[1][:,40:] / 255
+            state = torch.FloatTensor([left, right]).to(model.device)
 
-            # observation = np.swapaxes(observation, 0, 2)
-            # state = torch.FloatTensor(observation).to(model.device)
-
-            # pi, action, value = model(state)
             action = model.actor.actor_net(state)
             action = int(torch.argmax(action).item())
 
