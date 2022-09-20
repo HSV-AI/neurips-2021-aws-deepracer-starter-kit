@@ -9,7 +9,7 @@ import os
 import cv2
 
 class HSVRacerAgent(DeepracerAgent):
-    def __init__(self):
+    def __init__(self, record = False):
         pl.seed_everything(0)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         dirname = os.path.dirname(__file__)
@@ -17,13 +17,20 @@ class HSVRacerAgent(DeepracerAgent):
         self.model = torch.load(filename)
         self.model.to(self.device)
         self.model.eval()
+        self.observations = []
+        self.record = record
         pass
 
     def register_reset(self, observations):
         observation = observations['STEREO_CAMERAS']
         observation = np.swapaxes(observation, 0, 2)
-        left = observation[0][:,40:] / 255
-        right = observation[1][:,40:] / 255
+        left = observation[0][:,40:]
+        left = left + np.random.normal(128, 64, left.shape)
+        right = observation[1][:,40:]
+        right = right + np.random.normal(128, 64, right.shape)
+        if self.record:
+            total = [left, right]
+            self.observations.append(total)
         state = torch.FloatTensor([left, right]).to(self.device)
 
         with torch.no_grad():
@@ -39,8 +46,13 @@ class HSVRacerAgent(DeepracerAgent):
     def compute_action(self, observations, info):
         observation = observations['STEREO_CAMERAS']
         observation = np.swapaxes(observation, 0, 2)
-        left = observation[0][:,40:] / 255
-        right = observation[1][:,40:] / 255
+        left = observation[0][:,40:]
+        left = left + np.random.normal(128, 64, left.shape)
+        right = observation[1][:,40:]
+        right = right + np.random.normal(128, 64, right.shape)
+        if self.record:
+            total = [left, right]
+            self.observations.append(total)
         state = torch.FloatTensor([left, right]).to(self.device)
         with torch.no_grad():
             # logits = self.model(state)
@@ -50,3 +62,28 @@ class HSVRacerAgent(DeepracerAgent):
             action = self.model(state)
             action = int(torch.argmax(action).item())
         return action
+
+    def save_obeservations(self, filename):
+        if self.record:
+            size = 320, 80
+            fps=15
+            out = cv2.VideoWriter(filename, 0, fps, (size[0], size[1]))
+
+            for idx, state in enumerate(self.observations):
+
+                left = state[0]
+                right = state[1]
+                state = np.vstack((left, right))
+
+                state = np.rot90(state, 3)
+
+                state = np.dstack([state, state, state])
+
+                print(state.shape)
+                out.write(state)
+           
+            out.release()
+            #closing all open windows 
+            cv2.destroyAllWindows()
+
+            self.observations.clear()

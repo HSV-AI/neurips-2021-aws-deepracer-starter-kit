@@ -10,7 +10,7 @@ class DeepracerGymEnv(gym.Env):
             low=float(0), 
             high=float(255), 
             #shape=(2, 160, 120,),
-            shape=(120, 160, 2,),
+            shape=(80, 160, 2,),
             dtype=np.uint8
         )
     

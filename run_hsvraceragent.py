@@ -20,7 +20,7 @@ import click
 def main(model, port):
 
     # pl.seed_everything(0)
-    agent = HSVRacerAgent()
+    agent = HSVRacerAgent(record=True)
 
     env = gym.make('deepracer_gym:deepracer-v0', port=port)
     #env = Extractor(env)
@@ -53,6 +53,10 @@ def main(model, port):
 
             steps_completed = 0
             total_reward = 0
+
+            filename = 'observations-noisy-'+str(episodes_completed)+'.avi'
+            agent.save_obeservations(filename)
+
             observation = env.reset()
             action = agent.register_reset(observation)
         else:

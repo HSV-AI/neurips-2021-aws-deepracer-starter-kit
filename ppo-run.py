@@ -16,7 +16,7 @@ from hsvracer import PPOLightning
 pl.seed_everything(0)
 device = "cuda"
 
-model = PPOLightning.load_from_checkpoint("eval_reward_checkpoints/epoch=336-step=2695.ckpt")
+model = PPOLightning.load_from_checkpoint("max_reward_checkpoints/epoch=571-step=4575.ckpt")
 model.eval()
 model.to(device)
 
@@ -25,9 +25,9 @@ env = gym.make('deepracer_gym:deepracer-v0', port=8888)
 observations = env.reset()
 observation = observations['STEREO_CAMERAS']
 observation = np.swapaxes(observation, 0, 2)
-edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-state = torch.FloatTensor([edges_0, edges_1]).to(device)
+left = observation[0][:,40:] / 255
+right = observation[1][:,40:] / 255
+state = torch.FloatTensor([left, right]).to(device)
 
 with torch.no_grad():
     action = model.actor.actor_net(state)
@@ -46,9 +46,9 @@ while episodes_completed < 5:
     # observations, reward, done, info = env.step(torch.argmax(action).item())
     observation = observations['STEREO_CAMERAS']
     observation = np.swapaxes(observation, 0, 2)
-    edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-    edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-    state = torch.FloatTensor([edges_0, edges_1]).to(device)
+    left = observation[0][:,40:] / 255
+    right = observation[1][:,40:] / 255
+    state = torch.FloatTensor([left, right]).to(device)
 
     steps_completed += 1 
     total_reward += reward
@@ -61,9 +61,9 @@ while episodes_completed < 5:
         observations = env.reset()
         observation = observations['STEREO_CAMERAS']
         observation = np.swapaxes(observation, 0, 2)
-        edges_0 = cv2.Canny(image=observation[0], threshold1=100, threshold2=200) # Canny Edge Detection
-        edges_1 = cv2.Canny(image=observation[1], threshold1=100, threshold2=200) # Canny Edge Detection
-        state = torch.FloatTensor([edges_0, edges_1]).to(device)
+        left = observation[0][:,40:] / 255
+        right = observation[1][:,40:] / 255
+        state = torch.FloatTensor([left, right]).to(device)
 
     with torch.no_grad():
         action = model.actor.actor_net(state)
