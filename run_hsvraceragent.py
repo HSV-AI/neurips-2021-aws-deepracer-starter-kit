@@ -15,8 +15,11 @@ import click
 
 
 @click.command()
-@click.option('--model', help='Model file to use')
-@click.option('--port', default=8888, help='Port to connect to env on')
+@click.option('--model', default='submit_models/best_model', help='Model file to use')
+# NOTE no default port to keep from messing up training by 
+#      connecting to a running server
+@click.option('--port', default=6000, help='Port to connect to env on')
+#@click.option('--stack-size', default=2, help='Port to connect to env on')
 def main(model, port):
 
     # pl.seed_everything(0)
@@ -27,13 +30,12 @@ def main(model, port):
     #env = BasicRewardRework(env)
     #env = Stacker(env, stack_size=4)
 
-    state = env.reset()
-    action = agent.register_reset(state)
     print("Deepracer Environment Connected succesfully")
 
     steps_completed = 0
     episodes_completed = 0
     total_reward = 0
+    total_total_reward = 0
 
     while episodes_completed < 5:
 
@@ -48,19 +50,15 @@ def main(model, port):
                 "Episodes Completed:", episodes_completed, 
                 "Steps:", steps_completed, 
                 "Total Reward", total_reward, 
-                "Current Reward", reward,
-                "Avg Reward", total_reward / steps_completed)
+                "Current Reward", reward)
 
-            steps_completed = 0
-            total_reward = 0
-
-            filename = 'observations-noisy-'+str(episodes_completed)+'.avi'
-            agent.save_obeservations(filename)
-
-            observation = env.reset()
-            action = agent.register_reset(observation)
-        else:
-            action  = agent.compute_action(observation, info)
+                steps_completed = 0
+                total_total_reward += total_reward
+                total_reward = 0
+                observation = env.reset()
+                action = agent.register_reset(observation)
+            else:
+                action  = agent.compute_action(observation, info)
 
 if __name__ == '__main__':
     main()

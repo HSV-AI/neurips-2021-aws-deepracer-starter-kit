@@ -1,173 +1,17 @@
 services:
-  deepracer_19:
+  deepracer_eval:
     image: aicrowd/base-images:deepracer_round1_release
     deploy:
       resources:
         limits:
           cpus: 3
-          memory: 4g
+          memory: 6g
     ports:
       #- "5019:5000"
-      - "8906:8888"
+      - "6000:8888"
     command: /bin/bash
 
-  deepracer_20:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5020:5000"
-      - "8907:8888"
-    command: /bin/bash
-
-  deepracer_21:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5021:5000"
-      - "8908:8888"
-    command: /bin/bash
-
-  deepracer_22:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5022:5000"
-      - "8909:8888"
-    command: /bin/bash
-
-  deepracer_23:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5023:5000"
-      - "8910:8888"
-    command: /bin/bash
-
-  deepracer_24:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5024:5000"
-      - "8911:8888"
-    command: /bin/bash
-
-  deepracer_25:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5025:5000"
-      - "8912:8888"
-    command: /bin/bash
-
-  deepracer_26:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5026:5000"
-      - "8913:8888"
-    command: /bin/bash
-
-  deepracer_27:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5027:5000"
-      - "8914:8888"
-    command: /bin/bash
-
-  deepracer_28:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5028:5000"
-      - "8915:8888"
-    command: /bin/bash
-
-  deepracer_29:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5029:5000"
-      - "8916:8888"
-    command: /bin/bash
-
-  deepracer_30:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5030:5000"
-      - "8917:8888"
-    command: /bin/bash
-
-  deepracer_31:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5031:5000"
-      - "8918:8888"
-    command: /bin/bash
-
-  deepracer_32:
-    image: aicrowd/base-images:deepracer_round1_release
-    deploy:
-      resources:
-        limits:
-          cpus: 3
-          memory: 4g
-    ports:
-      #- "5032:5000"
-      - "8919:8888"
-    command: /bin/bash
-
-  # deepracer_33:
+  # deepracer_20:
   #   image: aicrowd/base-images:deepracer_round1_release
   #   deploy:
   #     resources:
@@ -175,10 +19,11 @@ services:
   #         cpus: 3
   #         memory: 4g
   #   ports:
-  #     #- "5033:5000"
-  #     - "8920:8888"
+  #     #- "5020:5000"
+  #     - "8907:8888"
+  #   command: /bin/bash
 
-  # deepracer_34:
+  # deepracer_21:
   #   image: aicrowd/base-images:deepracer_round1_release
   #   deploy:
   #     resources:
@@ -186,10 +31,11 @@ services:
   #         cpus: 3
   #         memory: 4g
   #   ports:
-  #     #- "5034:5000"
-  #     - "8921:8888"
+  #     #- "5021:5000"
+  #     - "8908:8888"
+  #   command: /bin/bash
 
-  # deepracer_35:
+  # deepracer_22:
   #   image: aicrowd/base-images:deepracer_round1_release
   #   deploy:
   #     resources:
@@ -197,10 +43,11 @@ services:
   #         cpus: 3
   #         memory: 4g
   #   ports:
-  #     #- "5033:5000"
-  #     - "8922:8888"
+  #     #- "5022:5000"
+  #     - "8909:8888"
+  #   command: /bin/bash
 
-  # deepracer_36:
+  # deepracer_23:
   #   image: aicrowd/base-images:deepracer_round1_release
   #   deploy:
   #     resources:
@@ -208,5 +55,158 @@ services:
   #         cpus: 3
   #         memory: 4g
   #   ports:
-  #     #- "5034:5000"
-  #     - "8923:8888"
+  #     #- "5023:5000"
+  #     - "8910:8888"
+  #   command: /bin/bash
+
+  # deepracer_24:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5024:5000"
+  #     - "8911:8888"
+  #   command: /bin/bash
+
+  # deepracer_25:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5025:5000"
+  #     - "8912:8888"
+  #   command: /bin/bash
+
+  # deepracer_26:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5026:5000"
+  #     - "8913:8888"
+  #   command: /bin/bash
+
+  # deepracer_27:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5027:5000"
+  #     - "8914:8888"
+  #   command: /bin/bash
+
+  # deepracer_28:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5028:5000"
+  #     - "8915:8888"
+  #   command: /bin/bash
+
+  # deepracer_29:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5029:5000"
+  #     - "8916:8888"
+  #   command: /bin/bash
+
+  # deepracer_30:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5030:5000"
+  #     - "8917:8888"
+  #   command: /bin/bash
+
+  # deepracer_31:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5031:5000"
+  #     - "8918:8888"
+  #   command: /bin/bash
+
+  # deepracer_32:
+  #   image: aicrowd/base-images:deepracer_round1_release
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 3
+  #         memory: 4g
+  #   ports:
+  #     #- "5032:5000"
+  #     - "8919:8888"
+  #   command: /bin/bash
+
+  # # deepracer_33:
+  # #   image: aicrowd/base-images:deepracer_round1_release
+  # #   deploy:
+  # #     resources:
+  # #       limits:
+  # #         cpus: 3
+  # #         memory: 4g
+  # #   ports:
+  # #     #- "5033:5000"
+  # #     - "8920:8888"
+
+  # # deepracer_34:
+  # #   image: aicrowd/base-images:deepracer_round1_release
+  # #   deploy:
+  # #     resources:
+  # #       limits:
+  # #         cpus: 3
+  # #         memory: 4g
+  # #   ports:
+  # #     #- "5034:5000"
+  # #     - "8921:8888"
+
+  # # deepracer_35:
+  # #   image: aicrowd/base-images:deepracer_round1_release
+  # #   deploy:
+  # #     resources:
+  # #       limits:
+  # #         cpus: 3
+  # #         memory: 4g
+  # #   ports:
+  # #     #- "5033:5000"
+  # #     - "8922:8888"
+
+  # # deepracer_36:
+  # #   image: aicrowd/base-images:deepracer_round1_release
+  # #   deploy:
+  # #     resources:
+  # #       limits:
+  # #         cpus: 3
+  # #         memory: 4g
+  # #   ports:
+  # #     #- "5034:5000"
+  # #     - "8923:8888"

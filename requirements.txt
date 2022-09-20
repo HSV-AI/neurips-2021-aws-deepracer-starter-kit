@@ -19,23 +19,33 @@ attrs==21.2.0
 cachetools==4.2.4
     # via google-auth
 certifi==2021.5.30
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 chardet==4.0.0
     # via aiohttp
 charset-normalizer==2.0.6
     # via requests
+click==8.0.3
+    # via wandb
 cloudpickle==2.0.0
     # via -r .\requirements.in
 colorama==0.4.4
-    # via
-    #   icecream
-    #   tqdm
+    # via icecream
+cycler==0.10.0
+    # via matplotlib
 executing==0.8.2
     # via icecream
+fasteners==0.16.3
+    # via -r requirements.in
 fsspec[http]==2021.10.0
     # via pytorch-lightning
 future==0.18.2
     # via pytorch-lightning
+gitdb==4.0.9
+    # via gitpython
+gitpython==3.1.24
+    # via wandb
 google-auth==1.35.0
     # via
     #   google-auth-oauthlib
@@ -72,12 +82,19 @@ packaging==21.0
     # via
     #   pytorch-lightning
     #   torchmetrics
+pandas==1.3.3
+    # via stable-baselines3
 pickle5==0.0.11
     # via -r .\requirements.in
 pillow==8.3.2
-    # via torchvision
+    # via
+    #   matplotlib
+    #   stable-baselines3
+    #   torchvision
 protobuf==3.18.1
     # via tensorboard
+psutil==5.8.0
+    # via stable-baselines3
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
@@ -89,32 +106,53 @@ pydeprecate==0.3.1
 pygments==2.10.0
     # via icecream
 pyparsing==2.4.7
-    # via packaging
+    # via
+    #   matplotlib
+    #   packaging
+python-dateutil==2.8.2
+    # via
+    #   matplotlib
+    #   pandas
 pytorch-lightning==1.4.9
     # via -r .\requirements.in
 pyyaml==5.4.1
-    # via pytorch-lightning
+    # via
+    #   pytorch-lightning
+    #   wandb
 requests==2.26.0
     # via
+    #   docker
     #   fsspec
     #   requests-oauthlib
     #   tensorboard
+    #   wandb
 requests-oauthlib==1.3.0
     # via google-auth-oauthlib
 rsa==4.7.2
     # via google-auth
+sentry-sdk==1.4.3
+    # via wandb
+shortuuid==1.0.1
+    # via wandb
 six==1.16.0
     # via
     #   absl-py
     #   asttokens
+    #   atari-py
+    #   cycler
     #   google-auth
     #   grpcio
+    #   python-dateutil
+stable-baselines3[extra]==1.2.0
+    # via -r requirements.in
 tensorboard==2.6.0
     # via pytorch-lightning
 tensorboard-data-server==0.6.1
     # via tensorboard
 tensorboard-plugin-wit==1.8.0
     # via tensorboard
+termcolor==1.1.0
+    # via yaspin
 torch==1.9.1+cu111
     # via
     #   -r .\requirements.in
@@ -135,16 +173,25 @@ tqdm==4.62.3
 typing-extensions==3.10.0.2
     # via
     #   aiohttp
+    #   gitpython
     #   pytorch-lightning
     #   torch
 urllib3==1.26.7
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
+wandb==0.12.6
+    # via -r requirements.in
+websocket-client==1.2.1
+    # via docker
 werkzeug==2.0.2
     # via tensorboard
 wheel==0.37.0
     # via tensorboard
 yarl==1.6.3
     # via aiohttp
+yaspin==2.1.0
+    # via wandb
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
